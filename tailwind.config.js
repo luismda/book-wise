@@ -10,7 +10,11 @@ module.exports = {
       default: 'Nunito, sans-serif',
     },
 
-    space: {
+    maxWidth: {
+      16: '4rem',
+    },
+
+    spacing: {
       px: '1px',
       1: '0.25rem',
       2: '0.5rem',
@@ -21,6 +25,10 @@ module.exports = {
       7: '1.75rem',
       8: '2rem',
       10: '2.5rem',
+      13: '3.25rem',
+      16: '4rem',
+      18: '4.5rem',
+      58: '14.5rem',
     },
 
     fontSize: {
@@ -48,6 +56,7 @@ module.exports = {
     colors: {
       black: '#000000',
       white: '#FFFFFF',
+      transparent: 'transparent',
 
       green: {
         100: '#50B2C0',
@@ -60,6 +69,10 @@ module.exports = {
         200: '#2A2879',
       },
 
+      red: {
+        400: '#F75A68',
+      },
+
       gray: {
         100: '#F8F9FC',
         200: '#E6E8F2',
@@ -70,15 +83,20 @@ module.exports = {
         700: '#181C2A',
         800: '#0E1116',
       },
+    },
 
+    backgroundImage: {
+      'sidebar-gradient': 'url(/sidebar-gradient.png)',
       'gradient-vertical': `linear-gradient(180deg, #7FD1CC 0%, #9694F5 100%)`,
       'gradient-horizontal': `linear-gradient(90deg, #7FD1CC 0%, #9694F5 100%)`,
     },
 
     borderRadius: {
-      xs: '2.5px',
-      sm: '5px',
-      md: '10px',
+      px: '1px',
+      xxs: '2.5px',
+      xs: '4px',
+      sm: '8px',
+      md: '12px',
       lg: '20px',
       full: '99999px',
     },
