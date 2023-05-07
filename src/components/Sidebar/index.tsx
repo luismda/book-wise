@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { ChartLineUp, Binoculars, User } from 'phosphor-react'
 
-import bookWiseLogoImg from '../assets/book-wise-logo.svg'
+import bookWiseLogoImg from '@/assets/book-wise-logo.svg'
 
 import { SignInButton } from './SignInButton'
 import { NavLink } from './NavLink'
