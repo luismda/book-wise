@@ -20,18 +20,15 @@ export function Sidebar() {
         />
 
         <nav className="mt-16 flex flex-col gap-4">
-          <NavLink href="/">
-            <ChartLineUp size={24} />
+          <NavLink href="/" icon={ChartLineUp}>
             Início
           </NavLink>
-          <NavLink href="/explore">
-            <Binoculars size={24} />
+          <NavLink href="/explore" icon={Binoculars}>
             Explorar
           </NavLink>
 
           {isUserAuthenticated && (
-            <NavLink href="/profile">
-              <User size={24} />
+            <NavLink href="/profile" icon={User}>
               Perfil
             </NavLink>
           )}
