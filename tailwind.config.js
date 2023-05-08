@@ -13,6 +13,7 @@ module.exports = {
     maxWidth: {
       16: '4rem',
       '6xl': '70.25rem',
+      '8xl': '90rem',
     },
 
     spacing: {
