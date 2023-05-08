@@ -3,7 +3,7 @@ module.exports = {
   content: [
     './src/pages/**/*.{ts,tsx}',
     './src/components/**/*.{ts,tsx}',
-    './src/app/**/*.{ts,tsx}',
+    './src/layouts/**/*.{ts,tsx}',
   ],
   theme: {
     fontFamily: {
@@ -12,6 +12,7 @@ module.exports = {
 
     maxWidth: {
       16: '4rem',
+      '6xl': '70.25rem',
     },
 
     spacing: {
@@ -28,7 +29,9 @@ module.exports = {
       13: '3.25rem',
       16: '4rem',
       18: '4.5rem',
+      24: '6rem',
       58: '14.5rem',
+      63: '15.75rem',
     },
 
     fontSize: {

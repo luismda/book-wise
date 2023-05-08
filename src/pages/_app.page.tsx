@@ -1,4 +1,6 @@
 import '@/styles/globals.css'
+
+import { ElementType, Fragment, ReactNode } from 'react'
 import type { AppProps } from 'next/app'
 import { Nunito_Sans } from 'next/font/google'
 
@@ -7,6 +9,18 @@ const nunitoSans = Nunito_Sans({
   weight: ['400', '500', '700'],
 })
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component className={nunitoSans.className} {...pageProps} />
+interface CustomAppProps extends Omit<AppProps, 'Component'> {
+  Component: AppProps['Component'] & {
+    layout: ElementType<{ children: ReactNode }>
+  }
+}
+
+export default function App({ Component, pageProps }: CustomAppProps) {
+  const Layout = Component.layout ?? Fragment
+
+  return (
+    <Layout>
+      <Component className={nunitoSans.className} {...pageProps} />
+    </Layout>
+  )
 }
