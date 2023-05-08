@@ -7,7 +7,7 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      default: 'Nunito, sans-serif',
+      default: 'Nunito Sans, sans-serif',
     },
 
     maxWidth: {

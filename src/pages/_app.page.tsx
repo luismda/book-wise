@@ -19,8 +19,10 @@ export default function App({ Component, pageProps }: CustomAppProps) {
   const Layout = Component.layout ?? Fragment
 
   return (
-    <Layout>
-      <Component className={nunitoSans.className} {...pageProps} />
-    </Layout>
+    <div className={nunitoSans.className}>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </div>
   )
 }
