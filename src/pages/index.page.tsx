@@ -6,6 +6,7 @@ import { Avatar } from '@/components/Avatar'
 
 import bookImg from '../assets/domain-driven-design.png'
 import Image from 'next/image'
+import { RatingStarsView } from '@/components/RatingStarsView'
 
 export default function Home() {
   return (
@@ -45,7 +46,7 @@ export default function Home() {
                     <time className="text-sm leading-base text-gray-300">
                       Há 2 dias
                     </time>
-                    <div>Nota 4</div>
+                    <RatingStarsView ratingStars={4} />
                   </div>
 
                   <strong className="block mt-3 font-bold leading-short">
@@ -81,7 +82,7 @@ export default function Home() {
                       </time>
                     </div>
                   </div>
-                  <div>Nota 4</div>
+                  <RatingStarsView ratingStars={3} />
                 </header>
                 <div className="flex items-stretch gap-5">
                   <Image
@@ -144,7 +145,7 @@ export default function Home() {
                   </span>
                 </div>
 
-                <div>Nota 4</div>
+                <RatingStarsView ratingStars={5} />
               </div>
             </article>
           </div>
