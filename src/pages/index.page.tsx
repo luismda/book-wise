@@ -1,12 +1,12 @@
-import Link from 'next/link'
 import { CaretRight, ChartLineUp } from 'phosphor-react'
 
 import { DefaultLayout } from '@/layouts/DefaultLayout'
-import { Avatar } from '@/components/Avatar'
 
 import bookImg from '../assets/domain-driven-design.png'
 import { RatingStarsView } from '@/components/RatingStarsView'
 import { BookCover } from '@/components/BookCover'
+import { Avatar } from '@/components/Avatar'
+import { Link } from '@/components/Link'
 
 export default function Home() {
   return (
@@ -23,13 +23,12 @@ export default function Home() {
           <div>
             <div className="flex items-center justify-between">
               <p className="text-sm leading-base">Sua última leitura</p>
-              <Link
-                href="/profile"
-                className="flex items-center gap-2 text-sm font-bold leading-base text-purple-100 px-2 py-1 rounded-xs outline-none transition-colors hover:bg-purple-100/5 focus:bg-purple-100/5 focus:underline"
-              >
+              <Link.Root href="/profile">
                 Ver todas
-                <CaretRight className="text-md" />
-              </Link>
+                <Link.Icon>
+                  <CaretRight />
+                </Link.Icon>
+              </Link.Root>
             </div>
 
             <article className="mt-4 flex gap-6 items-stretch bg-gray-600 px-6 py-5 rounded-sm">
@@ -105,13 +104,12 @@ export default function Home() {
         <aside>
           <div className="flex items-center justify-between">
             <p className="text-sm leading-base">Livros populares</p>
-            <Link
-              href="/explore"
-              className="flex items-center gap-2 text-sm font-bold leading-base text-purple-100 px-2 py-1 rounded-xs outline-none transition-colors hover:bg-purple-100/5 focus:bg-purple-100/5 focus:underline"
-            >
+            <Link.Root href="/explore">
               Ver todos
-              <CaretRight className="text-md" />
-            </Link>
+              <Link.Icon>
+                <CaretRight />
+              </Link.Icon>
+            </Link.Root>
           </div>
 
           <div className="mt-4 flex flex-col gap-3">
