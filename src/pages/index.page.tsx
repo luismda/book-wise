@@ -7,6 +7,7 @@ import { RatingStarsView } from '@/components/RatingStarsView'
 import { BookCover } from '@/components/BookCover'
 import { Avatar } from '@/components/Avatar'
 import { Link } from '@/components/Link'
+import { BookCard } from '@/components/BookCard'
 
 export default function Home() {
   return (
@@ -39,7 +40,7 @@ export default function Home() {
                     <time className="text-sm leading-base text-gray-300">
                       Há 2 dias
                     </time>
-                    <RatingStarsView ratingStars={4} />
+                    <RatingStarsView ratingStarsAmount={4} />
                   </div>
 
                   <strong className="block mt-3 font-bold leading-short">
@@ -75,7 +76,7 @@ export default function Home() {
                       </time>
                     </div>
                   </div>
-                  <RatingStarsView ratingStars={3} />
+                  <RatingStarsView ratingStarsAmount={3} />
                 </header>
                 <div className="flex items-stretch gap-5">
                   <BookCover bookCoverUrl={bookImg.src} altText="" />
@@ -113,21 +114,19 @@ export default function Home() {
           </div>
 
           <div className="mt-4 flex flex-col gap-3">
-            <article className="flex items-stretch gap-5 bg-gray-700 px-5 py-4 rounded-sm">
-              <BookCover bookCoverUrl={bookImg.src} altText="" size="xs" />
-              <div className="flex flex-col justify-between">
-                <div>
-                  <strong className="block font-bold leading-short">
-                    A revolução dos bichos
-                  </strong>
-                  <span className="text-sm leading-base text-gray-400">
-                    George Orwell
-                  </span>
-                </div>
-
-                <RatingStarsView ratingStars={5} />
-              </div>
-            </article>
+            <BookCard
+              title="Entendendo Algoritmos"
+              author="Aditya Y. Bhargava"
+              ratingStarsAmount={4}
+              cover={{ url: bookImg.src, altText: '', size: 'xs' }}
+              hasAlreadyBeenRead
+            />
+            <BookCard
+              title="14 Habitos de Desenvolvedor..."
+              author="Aditya Y. Bhargava"
+              ratingStarsAmount={5}
+              cover={{ url: bookImg.src, altText: '', size: 'xs' }}
+            />
           </div>
         </aside>
       </div>
