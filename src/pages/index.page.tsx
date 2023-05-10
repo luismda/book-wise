@@ -32,9 +32,14 @@ export default function Home() {
             </div>
 
             <SummaryRating
-              name="Entendendo Algoritmos"
-              author="Aditya Bhargava"
-              cover={{ url: bookImg.src, altText: '' }}
+              book={{
+                name: 'Entendendo Algoritmos',
+                author: 'Aditya Bhargava',
+                cover: {
+                  url: bookImg.src,
+                  altText: '',
+                },
+              }}
               rating="Nec tempor nunc in egestas. Euismod nisi eleifend at et in sagittis. Penatibus id vestibulum imperdiet a at imperdiet lectu"
               ratingStarsAmount={4}
               createdAt={new Date()}
