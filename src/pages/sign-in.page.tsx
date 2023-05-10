@@ -5,6 +5,7 @@ import bookWiseLogoImg from '../assets/book-wise-logo.svg'
 import googleIconImg from '../assets/google-icon.svg'
 import githubIconImg from '../assets/github-icon.svg'
 import rocketIconImg from '../assets/rocket-icon.svg'
+import { SignInProviderButton } from '@/components/SignInProviderButton'
 
 export default function SignIn() {
   return (
@@ -27,21 +28,28 @@ export default function SignIn() {
           </p>
 
           <div className="mt-10 flex flex-col gap-4">
-            <button className="flex items-center gap-5 px-6 py-5 rounded-sm bg-gray-600 text-lg font-bold leading-base text-gray-200 outline-none transition-colors border-2 border-transparent hover:border-gray-500 focus:border-gray-500">
-              <Image src={googleIconImg} alt="" />
+            <SignInProviderButton.Root>
+              <SignInProviderButton.Icon>
+                <Image src={googleIconImg} alt="" />
+              </SignInProviderButton.Icon>
               Entrar com Google
-            </button>
-            <button className="flex items-center gap-5 px-6 py-5 rounded-sm bg-gray-600 text-lg font-bold leading-base text-gray-200 outline-none transition-colors border-2 border-transparent hover:border-gray-500 focus:border-gray-500">
-              <Image src={githubIconImg} alt="" />
+            </SignInProviderButton.Root>
+
+            <SignInProviderButton.Root>
+              <SignInProviderButton.Icon>
+                <Image src={githubIconImg} alt="" />
+              </SignInProviderButton.Icon>
               Entrar com GitHub
-            </button>
-            <Link
-              href="/"
-              className="flex items-center gap-5 px-6 py-5 rounded-sm bg-gray-600 text-lg font-bold leading-base text-gray-200 outline-none transition-colors border-2 border-transparent hover:border-gray-500 focus:border-gray-500"
-            >
-              <Image src={rocketIconImg} alt="" />
-              Acessar como visitante
-            </Link>
+            </SignInProviderButton.Root>
+
+            <SignInProviderButton.Root asChild>
+              <Link href="/">
+                <SignInProviderButton.Icon>
+                  <Image src={rocketIconImg} alt="" />
+                </SignInProviderButton.Icon>
+                Acessar como visitante
+              </Link>
+            </SignInProviderButton.Root>
           </div>
         </main>
       </div>
