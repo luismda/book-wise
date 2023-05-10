@@ -3,12 +3,10 @@ import { CaretRight, ChartLineUp } from 'phosphor-react'
 import { DefaultLayout } from '@/layouts/DefaultLayout'
 
 import bookImg from '../assets/domain-driven-design.png'
-import { RatingStarsView } from '@/components/RatingStarsView'
-import { BookCover } from '@/components/BookCover'
-import { Avatar } from '@/components/Avatar'
 import { Link } from '@/components/Link'
 import { BookCard } from '@/components/BookCard'
 import { SummaryRating } from '@/components/SummaryRating'
+import { UserSummaryRating } from '@/components/UserSummaryRating'
 
 export default function Home() {
   return (
@@ -48,40 +46,41 @@ export default function Home() {
               <p className="text-sm leading-base">Avaliações mais recentes</p>
             </div>
 
-            <div className="mt-4">
-              <article className="flex flex-col gap-8 bg-gray-700 p-6 rounded-sm">
-                <header className="flex items-start justify-between">
-                  <div className="flex items-start gap-4">
-                    <Avatar avatarUrl="https://github.com/luismda.png" />
-                    <div>
-                      <span className="block leading-base">Jaxson Dias</span>
-                      <time className="text-sm leading-base text-gray-400">
-                        Hoje
-                      </time>
-                    </div>
-                  </div>
-                  <RatingStarsView ratingStarsAmount={3} />
-                </header>
-                <div className="flex items-stretch gap-5">
-                  <BookCover bookCoverUrl={bookImg.src} altText="" />
-                  <div className="flex flex-col justify-between">
-                    <div>
-                      <strong className="block font-bold leading-short">
-                        Entendendo Algoritmos
-                      </strong>
-                      <span className="text-sm leading-base text-gray-400">
-                        Aditya Bhargava
-                      </span>
-                    </div>
-
-                    <p className="text-sm leading-base text-gray-300">
-                      Nec tempor nunc in egestas. Euismod nisi eleifend at et in
-                      sagittis. Penatibus id vestibulum imperdiet a at imperdiet
-                      lectu...
-                    </p>
-                  </div>
-                </div>
-              </article>
+            <div className="mt-4 flex flex-col gap-3">
+              <UserSummaryRating
+                book={{
+                  name: 'O guia do mochileiro das galáxias',
+                  author: 'Douglas Adams',
+                  cover: {
+                    url: bookImg.src,
+                    altText: '',
+                  },
+                }}
+                user={{
+                  name: 'Luis',
+                  avatarUrl: 'https://github.com/luismda.png',
+                }}
+                rating="Semper et sapien proin vitae nisi. Feugiat neque integer donec et aenean posuere amet ultrices. Cras fermentum id pulvinar varius leo a in. Amet libero pharetra nunc elementum fringilla velit ipsum. Sed vulputate massa velit nibh."
+                ratingStarsAmount={5}
+                createdAt={new Date()}
+              />
+              <UserSummaryRating
+                book={{
+                  name: 'O guia do mochileiro das galáxias',
+                  author: 'Douglas Adams',
+                  cover: {
+                    url: bookImg.src,
+                    altText: '',
+                  },
+                }}
+                user={{
+                  name: 'Luis',
+                  avatarUrl: 'https://github.com/luismda.png',
+                }}
+                rating="Semper et sapien proin vitae nisi. Feugiat neque integer donec et aenean posuere amet ultrices. Cras fermentum id pulvinar varius leo a in. Amet libero pharetra nunc elementum fringilla velit ipsum. Sed vulputate massa velit nibh."
+                ratingStarsAmount={5}
+                createdAt={new Date()}
+              />
             </div>
           </div>
         </main>
