@@ -4,7 +4,7 @@ import { BookCover } from './BookCover'
 import { RatingStarsView } from './RatingStarsView'
 
 interface BookCardProps {
-  title: string
+  name: string
   author: string
   ratingStarsAmount: number
   cover: {
@@ -16,7 +16,7 @@ interface BookCardProps {
 }
 
 export function BookCard({
-  title,
+  name,
   author,
   ratingStarsAmount,
   cover,
@@ -42,7 +42,7 @@ export function BookCard({
         <div className="flex flex-col justify-between">
           <div className="text-left">
             <strong className="block max-w-40 font-bold leading-short">
-              {title}
+              {name}
             </strong>
             <span className="text-sm leading-base text-gray-400">{author}</span>
           </div>

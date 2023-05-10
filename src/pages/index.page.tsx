@@ -8,6 +8,7 @@ import { BookCover } from '@/components/BookCover'
 import { Avatar } from '@/components/Avatar'
 import { Link } from '@/components/Link'
 import { BookCard } from '@/components/BookCard'
+import { SummaryRating } from '@/components/SummaryRating'
 
 export default function Home() {
   return (
@@ -32,31 +33,14 @@ export default function Home() {
               </Link.Root>
             </div>
 
-            <article className="mt-4 flex gap-6 items-stretch bg-gray-600 px-6 py-5 rounded-sm">
-              <BookCover bookCoverUrl={bookImg.src} altText="" />
-              <div className="flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between">
-                    <time className="text-sm leading-base text-gray-300">
-                      Há 2 dias
-                    </time>
-                    <RatingStarsView ratingStarsAmount={4} />
-                  </div>
-
-                  <strong className="block mt-3 font-bold leading-short">
-                    Entendendo Algoritmos
-                  </strong>
-                  <span className="text-sm leading-base text-gray-400">
-                    Aditya Bhargava
-                  </span>
-                </div>
-
-                <p className="text-sm leading-base text-gray-300">
-                  Nec tempor nunc in egestas. Euismod nisi eleifend at et in
-                  sagittis. Penatibus id vestibulum...
-                </p>
-              </div>
-            </article>
+            <SummaryRating
+              name="Entendendo Algoritmos"
+              author="Aditya Bhargava"
+              cover={{ url: bookImg.src, altText: '' }}
+              rating="Nec tempor nunc in egestas. Euismod nisi eleifend at et in sagittis. Penatibus id vestibulum imperdiet a at imperdiet lectu"
+              ratingStarsAmount={4}
+              createdAt={new Date()}
+            />
           </div>
 
           <div className="mt-10">
@@ -115,14 +99,14 @@ export default function Home() {
 
           <div className="mt-4 flex flex-col gap-3">
             <BookCard
-              title="Entendendo Algoritmos"
+              name="Entendendo Algoritmos"
               author="Aditya Y. Bhargava"
               ratingStarsAmount={4}
               cover={{ url: bookImg.src, altText: '', size: 'xs' }}
               hasAlreadyBeenRead
             />
             <BookCard
-              title="14 Habitos de Desenvolvedor..."
+              name="14 Habitos de Desenvolvedor..."
               author="Aditya Y. Bhargava"
               ratingStarsAmount={5}
               cover={{ url: bookImg.src, altText: '', size: 'xs' }}
