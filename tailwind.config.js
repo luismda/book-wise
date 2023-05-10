@@ -36,6 +36,7 @@ module.exports = {
       43: '10.75rem',
       58: '14.5rem',
       63: '15.75rem',
+      93: '23.25rem',
     },
 
     fontSize: {
@@ -94,6 +95,7 @@ module.exports = {
 
     backgroundImage: {
       'sidebar-gradient': 'url(/sidebar-gradient.png)',
+      'sign-in-cover': 'url(/sign-in-cover.png)',
       'gradient-vertical': `linear-gradient(180deg, #7FD1CC 0%, #9694F5 100%)`,
       'gradient-horizontal': `linear-gradient(90deg, #7FD1CC 0%, #9694F5 100%)`,
     },
