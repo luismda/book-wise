@@ -1,6 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { signIn, useSession } from 'next-auth/react'
+import { GetServerSideProps } from 'next'
+import { getServerSession } from 'next-auth'
+import { signIn } from 'next-auth/react'
+
+import { authOptions } from './api/auth/[...nextauth].api'
 
 import bookWiseLogoImg from '../assets/book-wise-logo.svg'
 import googleIconImg from '../assets/google-icon.svg'
@@ -16,9 +20,6 @@ export default function SignIn() {
   async function handleSignInWithGitHub() {
     await signIn('github')
   }
-
-  const session = useSession()
-  console.log(session)
 
   return (
     <div className="w-full h-screen max-w-8xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[42%_1fr]">
@@ -67,4 +68,23 @@ export default function SignIn() {
       </div>
     </div>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions)
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {
+      session,
+    },
+  }
 }

@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { useSession } from 'next-auth/react'
 import { ChartLineUp, Binoculars, User } from 'phosphor-react'
 
 import bookWiseLogoImg from '@/assets/book-wise-logo.svg'
@@ -7,7 +8,9 @@ import { SignInButton } from './SignInButton'
 import { NavLink } from './NavLink'
 
 export function Sidebar() {
-  const isUserAuthenticated = true
+  const session = useSession()
+
+  const isUserAuthenticated = session.status === 'authenticated'
 
   return (
     <aside className="w-full lg:w-58 fixed lg:top-5 lg:bottom-4 px-13 pt-10 pb-6 rounded-md flex lg:flex-col justify-between items-center bg-sidebar-gradient bg-no-repeat bg-[length:100%_100%]">

@@ -54,10 +54,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, user }) {
       return {
         ...session,
-        user: {
-          ...user,
-          emailVerified: undefined,
-        },
+        user,
       }
     },
   },

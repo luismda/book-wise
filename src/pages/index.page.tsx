@@ -1,5 +1,8 @@
+import { GetServerSideProps } from 'next'
+import { getServerSession } from 'next-auth'
 import { CaretRight, ChartLineUp } from 'phosphor-react'
 
+import { authOptions } from './api/auth/[...nextauth].api'
 import { DefaultLayout } from '@/layouts/DefaultLayout'
 
 import bookImg from '../assets/domain-driven-design.png'
@@ -123,3 +126,13 @@ export default function Home() {
 }
 
 Home.layout = DefaultLayout
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions)
+
+  return {
+    props: {
+      session,
+    },
+  }
+}
