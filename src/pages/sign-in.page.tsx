@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 
 import bookWiseLogoImg from '../assets/book-wise-logo.svg'
 import googleIconImg from '../assets/google-icon.svg'
@@ -12,6 +12,13 @@ export default function SignIn() {
   async function handleSignInWithGoogle() {
     await signIn('google')
   }
+
+  async function handleSignInWithGitHub() {
+    await signIn('github')
+  }
+
+  const session = useSession()
+  console.log(session)
 
   return (
     <div className="w-full h-screen max-w-8xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[42%_1fr]">
@@ -40,7 +47,7 @@ export default function SignIn() {
               Entrar com Google
             </SignInProviderButton.Root>
 
-            <SignInProviderButton.Root>
+            <SignInProviderButton.Root onClick={handleSignInWithGitHub}>
               <SignInProviderButton.Icon>
                 <Image src={githubIconImg} alt="" />
               </SignInProviderButton.Icon>
