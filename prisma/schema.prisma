@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  name       String
+  email      String?  @unique
+  avatar_url String?
+  created_at DateTime @default(now())
+
+  accounts Account[]
+  sessions Session[]
+  ratings  Rating[]
+
+  @@map("users")
+}
+
+model Book {
+  id          String   @id @default(uuid())
+  name        String
+  author      String
+  summary     String   @db.Text
+  cover_url   String
+  total_pages Int
+  created_at  DateTime @default(now())
+
+  categories CategoriesOnBooks[]
+  ratings    Rating[]
+
+  @@map("books")
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String @unique
+
+  books CategoriesOnBooks[]
+
+  @@map("categories")
+}
+
+model CategoriesOnBooks {
+  book_id     String
+  category_id String
+
+  book     Book     @relation(fields: [book_id], references: [id])
+  category Category @relation(fields: [category_id], references: [id])
+
+  @@id([book_id, category_id])
+  @@map("categories_on_books")
+}
+
+model Rating {
+  id          String   @id @default(uuid())
+  user_id     String
+  book_id     String
+  rate        Int
+  description String   @db.Text
+  created_at  DateTime @default(now())
+
+  book Book @relation(fields: [book_id], references: [id])
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("ratings")
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  user_id                  String
+  type                     String
+  provider                 String
+  provider_account_id      String
+  refresh_token            String? @db.Text
+  refresh_token_expires_in String?
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  user                     User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([provider, provider_account_id])
+  @@map("accounts")
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  user_id       String
+  session_token String
+  expires       DateTime
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
