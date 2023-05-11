@@ -3,17 +3,17 @@ import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
 import GithubProvider, { GithubProfile } from 'next-auth/providers/github'
 
 import { env } from '@/env'
+import { PrismaAdapter } from '@/lib/auth/prisma-adapter'
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(),
+
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
-          prompt: 'consent',
-          access_type: 'offline',
-          response_type: 'code',
           scope:
             'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
         },
@@ -30,6 +30,11 @@ export const authOptions: NextAuthOptions = {
     GithubProvider({
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
+      authorization: {
+        params: {
+          scope: 'read:user user:email',
+        },
+      },
       profile(profile: GithubProfile) {
         return {
           id: String(profile.id),
@@ -45,7 +50,10 @@ export const authOptions: NextAuthOptions = {
     async session({ session, user }) {
       return {
         ...session,
-        user,
+        user: {
+          ...user,
+          emailVerified: undefined,
+        },
       }
     },
   },
