@@ -1,8 +1,9 @@
 import '@/styles/globals.css'
 
-import { ElementType, Fragment, ReactNode } from 'react'
 import type { AppProps } from 'next/app'
+import { ElementType, Fragment, ReactNode } from 'react'
 import { Nunito_Sans } from 'next/font/google'
+import { SessionProvider } from 'next-auth/react'
 
 const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
@@ -15,14 +16,19 @@ interface CustomAppProps extends Omit<AppProps, 'Component'> {
   }
 }
 
-export default function App({ Component, pageProps }: CustomAppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: CustomAppProps) {
   const Layout = Component.layout ?? Fragment
 
   return (
-    <div className={nunitoSans.className}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </div>
+    <SessionProvider session={session}>
+      <div className={nunitoSans.className}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </div>
+    </SessionProvider>
   )
 }

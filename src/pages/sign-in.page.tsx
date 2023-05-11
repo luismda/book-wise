@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { signIn } from 'next-auth/react'
 
 import bookWiseLogoImg from '../assets/book-wise-logo.svg'
 import googleIconImg from '../assets/google-icon.svg'
@@ -8,6 +9,10 @@ import rocketIconImg from '../assets/rocket-icon.svg'
 import { SignInProviderButton } from '@/components/SignInProviderButton'
 
 export default function SignIn() {
+  async function handleSignInWithGoogle() {
+    await signIn('google')
+  }
+
   return (
     <div className="w-full h-screen max-w-8xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[42%_1fr]">
       <div className="py-5">
@@ -28,7 +33,7 @@ export default function SignIn() {
           </p>
 
           <div className="mt-10 flex flex-col gap-4">
-            <SignInProviderButton.Root>
+            <SignInProviderButton.Root onClick={handleSignInWithGoogle}>
               <SignInProviderButton.Icon>
                 <Image src={googleIconImg} alt="" />
               </SignInProviderButton.Icon>
