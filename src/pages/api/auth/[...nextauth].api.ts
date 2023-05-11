@@ -47,6 +47,10 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
+    async redirect({ baseUrl }) {
+      return baseUrl
+    },
+
     async session({ session, user }) {
       return {
         ...session,
