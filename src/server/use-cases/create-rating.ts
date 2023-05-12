@@ -1,6 +1,9 @@
-import { RatingsRepository, Rating } from '@/repositories/ratings-repository'
-import { BooksRepository } from '@/repositories/books-repository'
-import { UsersRepository } from '@/repositories/users-repository'
+import {
+  RatingsRepository,
+  Rating,
+} from '@/server/repositories/ratings-repository'
+import { BooksRepository } from '@/server/repositories/books-repository'
+import { UsersRepository } from '@/server/repositories/users-repository'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 import { RateOutsideOfMimAndMaxError } from './errors/rate-outside-of-mim-and-max-error'
 
