@@ -7,7 +7,7 @@ export interface Rating {
   created_at: Date
 }
 
-interface RatingCreateInput {
+export interface RatingCreateInput {
   user_id: string
   book_id: string
   rate: number

@@ -5,7 +5,7 @@ import {
 import { BooksRepository } from '@/server/repositories/books-repository'
 import { UsersRepository } from '@/server/repositories/users-repository'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
-import { RateOutsideOfMimAndMaxError } from './errors/rate-outside-of-mim-and-max-error'
+import { RateOutsideOfMimOrMaxError } from './errors/rate-outside-of-mim-or-max-error'
 
 interface CreateRatingUseCaseRequest {
   userId: string
@@ -44,7 +44,7 @@ export class CreateRatingUseCase {
     }
 
     if (rate < 1 || rate > 5) {
-      throw new RateOutsideOfMimAndMaxError()
+      throw new RateOutsideOfMimOrMaxError()
     }
 
     const rating = await this.ratingsRepository.create({
