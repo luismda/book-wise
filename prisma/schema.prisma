@@ -67,6 +67,7 @@ model Rating {
   book Book @relation(fields: [book_id], references: [id])
   user User @relation(fields: [user_id], references: [id])
 
+  @@index([user_id, book_id])
   @@map("ratings")
 }
 
