@@ -6,6 +6,7 @@ import { BooksRepository } from '@/server/repositories/books-repository'
 import { UsersRepository } from '@/server/repositories/users-repository'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 import { RateOutsideOfMimOrMaxError } from './errors/rate-outside-of-mim-or-max-error'
+import { UserRatingAlreadyExistsError } from './errors/user-rating-already-exists-error'
 
 interface CreateRatingUseCaseRequest {
   userId: string
@@ -41,6 +42,13 @@ export class CreateRatingUseCase {
 
     if (!book) {
       throw new ResourceNotFoundError('Book')
+    }
+
+    const userRatingAlreadyExisting =
+      await this.ratingsRepository.findByUserIdAndBookId(userId, bookId)
+
+    if (userRatingAlreadyExisting) {
+      throw new UserRatingAlreadyExistsError()
     }
 
     if (rate < 1 || rate > 5) {

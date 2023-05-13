@@ -43,6 +43,7 @@ export interface RatingFindManyInput {
 }
 
 export interface RatingsRepository {
+  findByUserIdAndBookId(userId: string, bookId: string): Promise<Rating | null>
   findByUserId(userId: string): Promise<CompleteRating | null>
   findMany(params: RatingFindManyInput): Promise<CompleteRating[]>
   create(data: RatingCreateInput): Promise<Rating>

@@ -8,6 +8,7 @@ import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-use
 import { InMemoryBooksRepository } from '../repositories/in-memory/in-memory-books-repository'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 import { RateOutsideOfMimOrMaxError } from './errors/rate-outside-of-mim-or-max-error'
+import { UserRatingAlreadyExistsError } from './errors/user-rating-already-exists-error'
 
 let ratingsRepository: RatingsRepository
 let usersRepository: UsersRepository
@@ -56,6 +57,36 @@ describe('Create Rating Use Case', () => {
         created_at: expect.any(Date),
       }),
     )
+  })
+
+  it('should not be able to create a rating twice of the same book', async () => {
+    const user = await usersRepository.create({
+      name: 'John Doe',
+    })
+
+    const book = await booksRepository.create({
+      name: 'Domain-Driven Design',
+      author: 'Eric Evans',
+      cover_url: 'Some book cover...',
+      summary: 'Some description...',
+      total_pages: 529,
+    })
+
+    await sut.execute({
+      userId: user.id,
+      bookId: book.id,
+      rate: 5,
+      description: 'Very interesting...',
+    })
+
+    await expect(() =>
+      sut.execute({
+        userId: user.id,
+        bookId: book.id,
+        rate: 5,
+        description: 'Very interesting...',
+      }),
+    ).rejects.toBeInstanceOf(UserRatingAlreadyExistsError)
   })
 
   it('should not be able to create a rating with non-existing user', async () => {

@@ -10,6 +10,18 @@ import {
 export class InMemoryRatingsRepository implements RatingsRepository {
   public items: Rating[] = []
 
+  async findByUserIdAndBookId(userId: string, bookId: string) {
+    const rating = this.items.find(
+      (item) => item.user_id === userId && item.book_id === bookId,
+    )
+
+    if (!rating) {
+      return null
+    }
+
+    return rating
+  }
+
   async findByUserId(userId: string) {
     const rating = this.items
       .sort((a, b) => {
