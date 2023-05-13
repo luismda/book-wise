@@ -38,7 +38,6 @@ export interface RatingCreateInput {
 }
 
 export interface RatingFindManyInput {
-  orderBy: 'asc' | 'desc'
   perPage: number
   page: number
 }

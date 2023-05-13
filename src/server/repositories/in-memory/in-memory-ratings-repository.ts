@@ -10,13 +10,13 @@ import {
 export class InMemoryRatingsRepository implements RatingsRepository {
   public items: Rating[] = []
 
-  async findMany({ orderBy, perPage, page }: RatingFindManyInput) {
+  async findMany({ perPage, page }: RatingFindManyInput) {
     const ratings = this.items
       .sort((a, b) => {
         const dateA = a.created_at.getTime()
         const dateB = b.created_at.getTime()
 
-        return orderBy === 'desc' ? dateB - dateA : dateA - dateB
+        return dateB - dateA
       })
       .slice((page - 1) * perPage, page * perPage)
 

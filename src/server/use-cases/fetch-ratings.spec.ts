@@ -19,34 +19,6 @@ describe('Fetch Ratings Use Case', () => {
   })
 
   it('should be able to fetch ratings', async () => {
-    await ratingsRepository.create({
-      user_id: 'user_id',
-      book_id: 'book_id',
-      rate: 5,
-      description: 'Very interesting...',
-    })
-
-    const { ratings } = await sut.execute({
-      orderBy: 'desc',
-      perPage: 6,
-      page: 1,
-    })
-
-    expect(ratings).toEqual([
-      expect.objectContaining({
-        id: expect.any(String),
-        rate: 5,
-        user: expect.objectContaining({
-          id: 'user_id',
-        }),
-        book: expect.objectContaining({
-          id: 'book_id',
-        }),
-      }),
-    ])
-  })
-
-  it('should be able to fetch ratings ordered by most recent', async () => {
     vi.setSystemTime(new Date(2023, 4, 13, 12, 30, 0))
 
     await ratingsRepository.create({
@@ -68,7 +40,6 @@ describe('Fetch Ratings Use Case', () => {
     })
 
     const { ratings } = await sut.execute({
-      orderBy: 'desc',
       perPage: 6,
       page: 1,
     })
@@ -92,57 +63,6 @@ describe('Fetch Ratings Use Case', () => {
         }),
         book: expect.objectContaining({
           id: 'book_id_1',
-        }),
-      }),
-    ])
-  })
-
-  it('should be able to fetch ratings ordered by most old', async () => {
-    vi.setSystemTime(new Date(2023, 4, 13, 12, 30, 0))
-
-    await ratingsRepository.create({
-      user_id: 'user_id_1',
-      book_id: 'book_id_1',
-      rate: 5,
-      description: 'Very interesting...',
-    })
-
-    const tenMinutesInMs = 1000 * 60 * 10
-
-    vi.advanceTimersByTime(tenMinutesInMs)
-
-    await ratingsRepository.create({
-      user_id: 'user_id_2',
-      book_id: 'book_id_2',
-      rate: 4,
-      description: 'Very interesting...',
-    })
-
-    const { ratings } = await sut.execute({
-      orderBy: 'asc',
-      perPage: 6,
-      page: 1,
-    })
-
-    expect(ratings).toEqual([
-      expect.objectContaining({
-        id: expect.any(String),
-        rate: 5,
-        user: expect.objectContaining({
-          id: 'user_id_1',
-        }),
-        book: expect.objectContaining({
-          id: 'book_id_1',
-        }),
-      }),
-      expect.objectContaining({
-        id: expect.any(String),
-        rate: 4,
-        user: expect.objectContaining({
-          id: 'user_id_2',
-        }),
-        book: expect.objectContaining({
-          id: 'book_id_2',
         }),
       }),
     ])
@@ -165,7 +85,6 @@ describe('Fetch Ratings Use Case', () => {
     }
 
     const { ratings } = await sut.execute({
-      orderBy: 'desc',
       perPage: 6,
       page: 2,
     })
