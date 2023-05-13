@@ -10,6 +10,48 @@ import {
 export class InMemoryRatingsRepository implements RatingsRepository {
   public items: Rating[] = []
 
+  async findByUserId(userId: string) {
+    const rating = this.items
+      .sort((a, b) => {
+        const dateA = a.created_at.getTime()
+        const dateB = b.created_at.getTime()
+
+        return dateB - dateA
+      })
+      .find((item) => item.user_id === userId)
+
+    if (!rating) {
+      return null
+    }
+
+    const { id, rate, description, created_at, user_id, book_id } = rating
+
+    const completeRating: CompleteRating = {
+      id,
+      rate,
+      description,
+      created_at,
+      user: {
+        id: user_id,
+        name: '',
+        email: null,
+        avatar_url: null,
+        created_at,
+      },
+      book: {
+        id: book_id,
+        name: '',
+        author: '',
+        summary: '',
+        cover_url: '',
+        total_pages: 0,
+        created_at,
+      },
+    }
+
+    return completeRating
+  }
+
   async findMany({ perPage, page }: RatingFindManyInput) {
     const ratings = this.items
       .sort((a, b) => {
