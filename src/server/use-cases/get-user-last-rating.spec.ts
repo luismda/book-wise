@@ -5,15 +5,22 @@ import { UsersRepository } from '../repositories/users-repository'
 import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-users-repository'
 import { GetUserLastRatingUseCase } from './get-user-last-rating'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { BooksRepository } from '../repositories/books-repository'
+import { InMemoryBooksRepository } from '../repositories/in-memory/in-memory-books-repository'
 
-let ratingsRepository: RatingsRepository
 let usersRepository: UsersRepository
+let booksRepository: BooksRepository
+let ratingsRepository: RatingsRepository
 let sut: GetUserLastRatingUseCase
 
 describe('Get User Last Rating Use Case', () => {
   beforeEach(() => {
-    ratingsRepository = new InMemoryRatingsRepository()
     usersRepository = new InMemoryUsersRepository()
+    booksRepository = new InMemoryBooksRepository()
+    ratingsRepository = new InMemoryRatingsRepository(
+      usersRepository,
+      booksRepository,
+    )
     sut = new GetUserLastRatingUseCase(ratingsRepository, usersRepository)
 
     vi.useFakeTimers()
@@ -30,9 +37,17 @@ describe('Get User Last Rating Use Case', () => {
       name: 'John Doe',
     })
 
+    const firstBook = await booksRepository.create({
+      name: 'Domain-Driven Design',
+      author: 'Eric Evans',
+      cover_url: 'Some book cover...',
+      summary: 'Some description...',
+      total_pages: 529,
+    })
+
     await ratingsRepository.create({
       user_id: user.id,
-      book_id: 'book_id_1',
+      book_id: firstBook.id,
       rate: 5,
       description: 'Very interesting...',
     })
@@ -41,9 +56,17 @@ describe('Get User Last Rating Use Case', () => {
 
     vi.advanceTimersByTime(tenMinutesInMs)
 
+    const secondBook = await booksRepository.create({
+      name: 'Clean Architecture',
+      author: 'Robert Martin',
+      cover_url: 'Some book cover...',
+      summary: 'Some description...',
+      total_pages: 432,
+    })
+
     await ratingsRepository.create({
       user_id: user.id,
-      book_id: 'book_id_2',
+      book_id: secondBook.id,
       rate: 4,
       description: 'Very interesting...',
     })
@@ -60,7 +83,8 @@ describe('Get User Last Rating Use Case', () => {
           id: user.id,
         }),
         book: expect.objectContaining({
-          id: 'book_id_2',
+          id: secondBook.id,
+          name: 'Clean Architecture',
         }),
       }),
     )

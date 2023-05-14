@@ -15,4 +15,5 @@ export interface UserCreateInput {
 export interface UsersRepository {
   findById(id: string): Promise<User | null>
   create(data: UserCreateInput): Promise<User>
+  list(): Promise<User[]>
 }

@@ -6,13 +6,20 @@ import {
   RatingFindManyInput,
   CompleteRating,
 } from '../ratings-repository'
+import { UsersRepository } from '../users-repository'
+import { BooksRepository } from '../books-repository'
 
 export class InMemoryRatingsRepository implements RatingsRepository {
-  public items: Rating[] = []
+  constructor(
+    private usersRepository?: UsersRepository,
+    private booksRepository?: BooksRepository,
+  ) {}
+
+  private ratings: Rating[] = []
 
   async findByUserIdAndBookId(userId: string, bookId: string) {
-    const rating = this.items.find(
-      (item) => item.user_id === userId && item.book_id === bookId,
+    const rating = this.ratings.find(
+      (rating) => rating.user_id === userId && rating.book_id === bookId,
     )
 
     if (!rating) {
@@ -23,49 +30,45 @@ export class InMemoryRatingsRepository implements RatingsRepository {
   }
 
   async findByUserId(userId: string) {
-    const rating = this.items
+    const rating = this.ratings
       .sort((a, b) => {
         const dateA = a.created_at.getTime()
         const dateB = b.created_at.getTime()
 
         return dateB - dateA
       })
-      .find((item) => item.user_id === userId)
+      .find((rating) => rating.user_id === userId)
 
     if (!rating) {
       return null
     }
 
-    const { id, rate, description, created_at, user_id, book_id } = rating
+    const users = (await this.usersRepository?.list()) ?? []
+    const books = (await this.booksRepository?.list()) ?? []
+
+    const user = users.find((user) => user.id === rating.user_id)
+    const book = books.find((book) => book.id === rating.book_id)
+
+    if (!user || !book) {
+      return null
+    }
+
+    const { id, rate, description, created_at } = rating
 
     const completeRating: CompleteRating = {
       id,
       rate,
       description,
       created_at,
-      user: {
-        id: user_id,
-        name: '',
-        email: null,
-        avatar_url: null,
-        created_at,
-      },
-      book: {
-        id: book_id,
-        name: '',
-        author: '',
-        summary: '',
-        cover_url: '',
-        total_pages: 0,
-        created_at,
-      },
+      user,
+      book,
     }
 
     return completeRating
   }
 
   async findMany({ perPage, page }: RatingFindManyInput) {
-    const ratings = this.items
+    const ratings = this.ratings
       .sort((a, b) => {
         const dateA = a.created_at.getTime()
         const dateB = b.created_at.getTime()
@@ -74,28 +77,20 @@ export class InMemoryRatingsRepository implements RatingsRepository {
       })
       .slice((page - 1) * perPage, page * perPage)
 
+    const users = (await this.usersRepository?.list()) ?? []
+    const books = (await this.booksRepository?.list()) ?? []
+
     const completeRatings: CompleteRating[] = ratings.map((rating) => {
+      const user = users.find((user) => user.id === rating.user_id)!
+      const book = books.find((book) => book.id === rating.book_id)!
+
       return {
         id: rating.id,
         rate: rating.rate,
         description: rating.description,
         created_at: rating.created_at,
-        user: {
-          id: rating.user_id,
-          name: '',
-          email: null,
-          avatar_url: null,
-          created_at: rating.created_at,
-        },
-        book: {
-          id: rating.book_id,
-          name: '',
-          author: '',
-          summary: '',
-          cover_url: '',
-          total_pages: 0,
-          created_at: rating.created_at,
-        },
+        user,
+        book,
       }
     })
 
@@ -112,8 +107,12 @@ export class InMemoryRatingsRepository implements RatingsRepository {
       created_at: new Date(),
     }
 
-    this.items.push(rating)
+    this.ratings.push(rating)
 
     return rating
+  }
+
+  async list() {
+    return this.ratings
   }
 }
