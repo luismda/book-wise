@@ -1,9 +1,19 @@
 import { randomUUID } from 'node:crypto'
-import { Book, BookCreateInput, BooksRepository } from '../books-repository'
+import {
+  Book,
+  BookCreateInput,
+  BookFindManyParams,
+  BooksRepository,
+} from '../books-repository'
 import { RatingsRepository } from '../ratings-repository'
+import { calculateAverageGrade } from '@/server/utils/calculate-average-grade'
+import { CategoriesOnBooksRepository } from '../categories-on-books-repository'
 
 export class InMemoryBooksRepository implements BooksRepository {
-  constructor(private ratingsRepository?: RatingsRepository) {}
+  constructor(
+    private ratingsRepository?: RatingsRepository,
+    private categoriesOnBooksRepository?: CategoriesOnBooksRepository,
+  ) {}
 
   private books: Book[] = []
 
@@ -15,6 +25,49 @@ export class InMemoryBooksRepository implements BooksRepository {
     }
 
     return book
+  }
+
+  async findMany({ page, perPage, categoriesId, query }: BookFindManyParams) {
+    const ratings = (await this.ratingsRepository?.list()) ?? []
+    const categoriesOnBooks =
+      (await this.categoriesOnBooksRepository?.list()) ?? []
+
+    const books = this.books
+      .slice((page - 1) * perPage, page * perPage)
+      .map((book) => {
+        const gradesOfBook = ratings
+          .filter((rating) => rating.book_id === book.id)
+          .map((rating) => rating.rate)
+
+        const averageGrade = calculateAverageGrade(gradesOfBook)
+
+        return {
+          ...book,
+          average_grade: averageGrade,
+        }
+      })
+      .filter((book) => {
+        if (categoriesId) {
+          const categoriesOfBook = categoriesOnBooks.filter(
+            (categoryOnBook) => categoryOnBook.book_id === book.id,
+          )
+
+          return categoriesOfBook.some((categoryOfBook) =>
+            categoriesId.includes(categoryOfBook.category_id),
+          )
+        }
+
+        return true
+      })
+      .filter((book) => {
+        if (query) {
+          return book.name.includes(query) || book.author.includes(query)
+        }
+
+        return true
+      })
+
+    return books
   }
 
   async findManyByPopularity(limit: number) {
@@ -44,10 +97,7 @@ export class InMemoryBooksRepository implements BooksRepository {
           .filter((rating) => rating.book_id === book.id)
           .map((rating) => rating.rate)
 
-        const sumOfGrades = gradesOfBook.reduce((acc, rate) => acc + rate, 0)
-        const gradesAmount = gradesOfBook.length
-
-        const averageGrade = sumOfGrades / gradesAmount
+        const averageGrade = calculateAverageGrade(gradesOfBook)
 
         return {
           ...book,
