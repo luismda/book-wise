@@ -10,4 +10,5 @@ export interface CategoryCreateInput {
 export interface CategoriesRepository {
   findMany(): Promise<Category[]>
   create(data: CategoryCreateInput): Promise<Category>
+  list(): Promise<Category[]>
 }

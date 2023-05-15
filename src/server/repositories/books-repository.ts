@@ -12,6 +12,12 @@ export interface BookWithAverageGrade extends Book {
   average_grade: number
 }
 
+export interface BookWithRelationships extends Book {
+  average_grade: number
+  ratings_amount: number
+  categories: string[]
+}
+
 export interface BookCreateInput {
   name: string
   author: string
@@ -29,6 +35,7 @@ export interface BookFindManyParams {
 
 export interface BooksRepository {
   findById(id: string): Promise<Book | null>
+  findByIdWithRelationships(id: string): Promise<BookWithRelationships | null>
   findMany(params: BookFindManyParams): Promise<BookWithAverageGrade[]>
   findManyByPopularity(limit: number): Promise<BookWithAverageGrade[]>
   create(data: BookCreateInput): Promise<Book>

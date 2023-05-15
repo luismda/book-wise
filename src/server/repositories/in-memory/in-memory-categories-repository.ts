@@ -22,4 +22,8 @@ export class InMemoryCategoriesRepository implements CategoriesRepository {
 
     return category
   }
+
+  async list() {
+    return this.categories
+  }
 }

@@ -8,11 +8,13 @@ import {
 import { RatingsRepository } from '../ratings-repository'
 import { calculateAverageGrade } from '@/server/utils/calculate-average-grade'
 import { CategoriesOnBooksRepository } from '../categories-on-books-repository'
+import { CategoriesRepository } from '../categories-repository'
 
 export class InMemoryBooksRepository implements BooksRepository {
   constructor(
     private ratingsRepository?: RatingsRepository,
     private categoriesOnBooksRepository?: CategoriesOnBooksRepository,
+    private categoriesRepository?: CategoriesRepository,
   ) {}
 
   private books: Book[] = []
@@ -25,6 +27,51 @@ export class InMemoryBooksRepository implements BooksRepository {
     }
 
     return book
+  }
+
+  async findByIdWithRelationships(id: string) {
+    const book = this.books.find((book) => book.id === id)
+
+    if (!book) {
+      return null
+    }
+
+    const ratings = (await this.ratingsRepository?.list()) ?? []
+    const categories = (await this.categoriesRepository?.list()) ?? []
+    const categoriesOnBooks =
+      (await this.categoriesOnBooksRepository?.list()) ?? []
+
+    const ratingsOfBook = ratings.filter((rating) => rating.book_id === book.id)
+    const gradesOfBook = ratingsOfBook.map((rating) => rating.rate)
+
+    const averageGrade = calculateAverageGrade(gradesOfBook)
+
+    const ratingsAmount = ratingsOfBook.length
+
+    const categoriesOfBook = categoriesOnBooks.filter(
+      (category) => category.book_id === book.id,
+    )
+    const categoryNamesOfBook = categoriesOfBook.reduce<string[]>(
+      (acc, categoryOfBook) => {
+        const categoryName = categories.find(
+          (category) => category.id === categoryOfBook.category_id,
+        )
+
+        if (categoryName) {
+          acc.push(categoryName.name)
+        }
+
+        return acc
+      },
+      [],
+    )
+
+    return {
+      ...book,
+      average_grade: averageGrade,
+      ratings_amount: ratingsAmount,
+      categories: categoryNamesOfBook,
+    }
   }
 
   async findMany({ page, perPage, categoriesId, query }: BookFindManyParams) {
