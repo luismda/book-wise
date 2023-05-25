@@ -83,6 +83,7 @@ export interface RatingFindManyInput {
 
 export interface RatingFindManyByUserIdParams {
   userId: string
+  query?: string
   perPage: number
   page: number
 }

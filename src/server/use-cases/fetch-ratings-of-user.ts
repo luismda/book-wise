@@ -7,6 +7,7 @@ import { UsersRepository } from '../repositories/users-repository'
 
 interface FetchRatingsOfUserUseCaseRequest {
   userId: string
+  query?: string
   perPage: number
   page: number
 }
@@ -23,6 +24,7 @@ export class FetchRatingsOfUserUseCase {
 
   async execute({
     userId,
+    query,
     perPage,
     page,
   }: FetchRatingsOfUserUseCaseRequest): Promise<FetchRatingsOfUserUseCaseResponse> {
@@ -34,6 +36,7 @@ export class FetchRatingsOfUserUseCase {
 
     const ratings = await this.ratingsRepository.findManyByUserId({
       userId,
+      query,
       page,
       perPage,
     })

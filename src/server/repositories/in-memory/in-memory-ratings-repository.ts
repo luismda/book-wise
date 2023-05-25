@@ -78,6 +78,7 @@ export class InMemoryRatingsRepository implements RatingsRepository {
 
   async findManyByUserId({
     userId,
+    query,
     page,
     perPage,
   }: RatingFindManyByUserIdParams) {
@@ -87,18 +88,29 @@ export class InMemoryRatingsRepository implements RatingsRepository {
 
     const books = (await this.booksRepository?.list()) ?? []
 
-    const ratingsWithBook: RatingWithBook[] = ratings.map((rating) => {
-      const book = books.find((book) => book.id === rating.book_id)!
+    const ratingsWithBook: RatingWithBook[] = ratings
+      .map((rating) => {
+        const book = books.find((book) => book.id === rating.book_id)!
 
-      return {
-        id: rating.id,
-        user_id: rating.user_id,
-        rate: rating.rate,
-        description: rating.description,
-        created_at: rating.created_at,
-        book,
-      }
-    })
+        return {
+          id: rating.id,
+          user_id: rating.user_id,
+          rate: rating.rate,
+          description: rating.description,
+          created_at: rating.created_at,
+          book,
+        }
+      })
+      .filter((rating) => {
+        if (query) {
+          return (
+            rating.book.name.includes(query) ||
+            rating.book.author.includes(query)
+          )
+        }
+
+        return true
+      })
 
     return ratingsWithBook
   }

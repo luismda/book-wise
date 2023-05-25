@@ -144,6 +144,63 @@ describe('Fetch Ratings of User Use Case', () => {
     ])
   })
 
+  it('it should be able to fetch ratings of user with search by book', async () => {
+    const user = await usersRepository.create({
+      name: 'John Doe',
+    })
+
+    const firstBook = await booksRepository.create({
+      name: 'Domain-Driven Design',
+      author: 'Eric Evans',
+      cover_url: 'Some book cover...',
+      summary: 'Some description...',
+      total_pages: 529,
+    })
+
+    const secondBook = await booksRepository.create({
+      name: 'Clean Architecture',
+      author: 'Robert Martin',
+      cover_url: 'Some book cover...',
+      summary: 'Some description...',
+      total_pages: 432,
+    })
+
+    await ratingsRepository.create({
+      user_id: user.id,
+      book_id: firstBook.id,
+      rate: 5,
+      description: 'Very interesting...',
+    })
+
+    await ratingsRepository.create({
+      user_id: user.id,
+      book_id: secondBook.id,
+      rate: 4,
+      description: 'Very interesting...',
+    })
+
+    const { ratings } = await sut.execute({
+      userId: user.id,
+      query: 'Architecture',
+      perPage: 6,
+      page: 1,
+    })
+
+    expect(ratings).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        user_id: user.id,
+        rate: 4,
+        description: 'Very interesting...',
+        book: expect.objectContaining({
+          id: secondBook.id,
+          name: 'Clean Architecture',
+          author: 'Robert Martin',
+        }),
+      }),
+    ])
+  })
+
   it('should not be able to fetch ratings of non-existent user', async () => {
     await expect(() =>
       sut.execute({
