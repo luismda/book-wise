@@ -9,14 +9,19 @@ import {
   RatingWithUser,
   RatingFindManyByUserIdParams,
   RatingWithBook,
+  UserMetricsOfRatings,
 } from '../ratings-repository'
 import { UsersRepository } from '../users-repository'
 import { BooksRepository } from '../books-repository'
+import { CategoriesOnBooksRepository } from '../categories-on-books-repository'
+import { CategoriesRepository } from '../categories-repository'
 
 export class InMemoryRatingsRepository implements RatingsRepository {
   constructor(
     private usersRepository?: UsersRepository,
     private booksRepository?: BooksRepository,
+    private categoriesOnBooksRepository?: CategoriesOnBooksRepository,
+    private categoriesRepository?: CategoriesRepository,
   ) {}
 
   private ratings: Rating[] = []
@@ -153,6 +158,82 @@ export class InMemoryRatingsRepository implements RatingsRepository {
     })
 
     return completeRatings
+  }
+
+  async countMetricsByUserId(userId: string): Promise<UserMetricsOfRatings> {
+    const ratingsOfUser = this.ratings.filter(
+      (rating) => rating.user_id === userId,
+    )
+
+    const books = (await this.booksRepository?.list()) ?? []
+    const categories = (await this.categoriesRepository?.list()) ?? []
+    const categoriesOnBooks =
+      (await this.categoriesOnBooksRepository?.list()) ?? []
+
+    const metricsOfReadBooks = ratingsOfUser.reduce<{
+      amountOfPagesRead: number
+      authorsRead: string[]
+    }>(
+      (acc, rating) => {
+        const book = books.find((book) => book.id === rating.book_id)!
+
+        acc.amountOfPagesRead += book.total_pages
+
+        if (!acc.authorsRead.includes(book.author)) {
+          acc.authorsRead.push(book.author)
+        }
+
+        return acc
+      },
+      {
+        amountOfPagesRead: 0,
+        authorsRead: [],
+      },
+    )
+
+    const readCategories = ratingsOfUser.reduce<
+      { categoryId: string; amount: number }[]
+    >((acc, rating) => {
+      const book = books.find((book) => book.id === rating.book_id)!
+      const categoriesOnBook = categoriesOnBooks.filter(
+        (category) => category.book_id === book.id,
+      )
+
+      for (const readCategory of categoriesOnBook) {
+        const readCategoryIndex = acc.findIndex(
+          (category) => category.categoryId === readCategory.category_id,
+        )
+
+        if (readCategoryIndex >= 0) {
+          acc[readCategoryIndex].amount += 1
+        } else {
+          acc.push({
+            categoryId: readCategory.category_id,
+            amount: 1,
+          })
+        }
+      }
+
+      return acc
+    }, [])
+
+    const [moreReadCategory] = readCategories.sort((a, b) => {
+      const amountA = a.amount
+      const amountB = b.amount
+
+      return amountB - amountA
+    })
+
+    const moreReadCategoryName = categories.find(
+      (category) => category.id === moreReadCategory.categoryId,
+    )!
+
+    return {
+      ratings_amount: ratingsOfUser.length,
+      amount_of_pages_read: metricsOfReadBooks.amountOfPagesRead,
+      amount_of_authors_read: metricsOfReadBooks.authorsRead.length,
+      most_read_category: moreReadCategoryName.name,
+    }
   }
 
   async create(data: RatingCreateInput) {
