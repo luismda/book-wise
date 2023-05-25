@@ -5,6 +5,8 @@ import {
   RatingCreateInput,
   RatingFindManyInput,
   CompleteRating,
+  RatingFindManyByBookIdParams,
+  RatingWithUser,
 } from '../ratings-repository'
 import { UsersRepository } from '../users-repository'
 import { BooksRepository } from '../books-repository'
@@ -65,6 +67,33 @@ export class InMemoryRatingsRepository implements RatingsRepository {
     }
 
     return completeRating
+  }
+
+  async findManyByBookId({
+    bookId,
+    page,
+    perPage,
+  }: RatingFindManyByBookIdParams) {
+    const ratings = this.ratings
+      .filter((rating) => rating.book_id === bookId)
+      .slice((page - 1) * perPage, page * perPage)
+
+    const users = (await this.usersRepository?.list()) ?? []
+
+    const ratingsWithUser: RatingWithUser[] = ratings.map((rating) => {
+      const user = users.find((user) => user.id === rating.user_id)!
+
+      return {
+        id: rating.id,
+        book_id: rating.book_id,
+        rate: rating.rate,
+        description: rating.description,
+        created_at: rating.created_at,
+        user,
+      }
+    })
+
+    return ratingsWithUser
   }
 
   async findMany({ perPage, page }: RatingFindManyInput) {
