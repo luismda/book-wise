@@ -1,6 +1,6 @@
 import {
   RatingsRepository,
-  UserMetricsOfRatings,
+  RatingsMetricsOfUser,
 } from '../repositories/ratings-repository'
 import { UsersRepository } from '../repositories/users-repository'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
@@ -10,7 +10,7 @@ interface GetUserMetricsUseCaseRequest {
 }
 
 interface GetUserMetricsUseCaseResponse {
-  userMetrics: UserMetricsOfRatings
+  userMetrics: RatingsMetricsOfUser
 }
 
 export class GetUserMetricsUseCase {

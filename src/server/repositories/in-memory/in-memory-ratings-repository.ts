@@ -3,13 +3,13 @@ import {
   RatingsRepository,
   Rating,
   RatingCreateInput,
-  RatingFindManyInput,
-  CompleteRating,
+  RatingFindManyParams,
+  RatingWithUserAndBook,
   RatingFindManyByBookIdParams,
   RatingWithUser,
   RatingFindManyByUserIdParams,
   RatingWithBook,
-  UserMetricsOfRatings,
+  RatingsMetricsOfUser,
 } from '../ratings-repository'
 import { UsersRepository } from '../users-repository'
 import { BooksRepository } from '../books-repository'
@@ -52,28 +52,26 @@ export class InMemoryRatingsRepository implements RatingsRepository {
       return null
     }
 
-    const users = (await this.usersRepository?.list()) ?? []
     const books = (await this.booksRepository?.list()) ?? []
 
-    const user = users.find((user) => user.id === rating.user_id)
     const book = books.find((book) => book.id === rating.book_id)
 
-    if (!user || !book) {
+    if (!book) {
       return null
     }
 
-    const { id, rate, description, created_at } = rating
+    const { id, user_id, rate, description, created_at } = rating
 
-    const completeRating: CompleteRating = {
+    const ratingWithBook: RatingWithBook = {
       id,
+      user_id,
       rate,
       description,
       created_at,
-      user,
       book,
     }
 
-    return completeRating
+    return ratingWithBook
   }
 
   async findManyByUserId({
@@ -142,7 +140,7 @@ export class InMemoryRatingsRepository implements RatingsRepository {
     return ratingsWithUser
   }
 
-  async findMany({ perPage, page }: RatingFindManyInput) {
+  async findMany({ perPage, page }: RatingFindManyParams) {
     const ratings = this.ratings
       .sort((a, b) => {
         const dateA = a.created_at.getTime()
@@ -155,24 +153,26 @@ export class InMemoryRatingsRepository implements RatingsRepository {
     const users = (await this.usersRepository?.list()) ?? []
     const books = (await this.booksRepository?.list()) ?? []
 
-    const completeRatings: CompleteRating[] = ratings.map((rating) => {
-      const user = users.find((user) => user.id === rating.user_id)!
-      const book = books.find((book) => book.id === rating.book_id)!
+    const ratingsWithUserAndBook: RatingWithUserAndBook[] = ratings.map(
+      (rating) => {
+        const user = users.find((user) => user.id === rating.user_id)!
+        const book = books.find((book) => book.id === rating.book_id)!
 
-      return {
-        id: rating.id,
-        rate: rating.rate,
-        description: rating.description,
-        created_at: rating.created_at,
-        user,
-        book,
-      }
-    })
+        return {
+          id: rating.id,
+          rate: rating.rate,
+          description: rating.description,
+          created_at: rating.created_at,
+          user,
+          book,
+        }
+      },
+    )
 
-    return completeRatings
+    return ratingsWithUserAndBook
   }
 
-  async countMetricsByUserId(userId: string): Promise<UserMetricsOfRatings> {
+  async countMetricsByUserId(userId: string): Promise<RatingsMetricsOfUser> {
     const ratingsOfUser = this.ratings.filter(
       (rating) => rating.user_id === userId,
     )

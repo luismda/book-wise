@@ -79,9 +79,7 @@ describe('Get User Last Rating Use Case', () => {
       expect.objectContaining({
         id: expect.any(String),
         rate: 4,
-        user: expect.objectContaining({
-          id: user.id,
-        }),
+        user_id: user.id,
         book: expect.objectContaining({
           id: secondBook.id,
           name: 'Clean Architecture',

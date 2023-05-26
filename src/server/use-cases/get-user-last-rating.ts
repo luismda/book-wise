@@ -1,6 +1,6 @@
 import {
   RatingsRepository,
-  CompleteRating,
+  RatingWithBook,
 } from '@/server/repositories/ratings-repository'
 import { UsersRepository } from '../repositories/users-repository'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
@@ -10,7 +10,7 @@ interface GetUserLastRatingUseCaseRequest {
 }
 
 interface GetUserLastRatingUseCaseResponse {
-  rating: CompleteRating | null
+  rating: RatingWithBook | null
 }
 
 export class GetUserLastRatingUseCase {

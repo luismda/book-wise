@@ -39,7 +39,7 @@ export interface RatingWithBook {
   }
 }
 
-export interface CompleteRating {
+export interface RatingWithUserAndBook {
   id: string
   rate: number
   description: string
@@ -62,7 +62,7 @@ export interface CompleteRating {
   }
 }
 
-export interface UserMetricsOfRatings {
+export interface RatingsMetricsOfUser {
   ratings_amount: number
   amount_of_pages_read: number
   amount_of_authors_read: number
@@ -76,7 +76,7 @@ export interface RatingCreateInput {
   description: string
 }
 
-export interface RatingFindManyInput {
+export interface RatingFindManyParams {
   perPage: number
   page: number
 }
@@ -97,7 +97,7 @@ export interface RatingFindManyByBookIdParams {
 export interface RatingsRepository {
   findByUserIdAndBookId(userId: string, bookId: string): Promise<Rating | null>
 
-  findByUserId(userId: string): Promise<CompleteRating | null>
+  findByUserId(userId: string): Promise<RatingWithBook | null>
 
   findManyByUserId(
     params: RatingFindManyByUserIdParams,
@@ -107,9 +107,9 @@ export interface RatingsRepository {
     params: RatingFindManyByBookIdParams,
   ): Promise<RatingWithUser[]>
 
-  findMany(params: RatingFindManyInput): Promise<CompleteRating[]>
+  findMany(params: RatingFindManyParams): Promise<RatingWithUserAndBook[]>
 
-  countMetricsByUserId(userId: string): Promise<UserMetricsOfRatings>
+  countMetricsByUserId(userId: string): Promise<RatingsMetricsOfUser>
 
   create(data: RatingCreateInput): Promise<Rating>
 

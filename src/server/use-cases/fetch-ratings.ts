@@ -1,6 +1,6 @@
 import {
   RatingsRepository,
-  CompleteRating,
+  RatingWithUserAndBook,
 } from '@/server/repositories/ratings-repository'
 
 interface FetchRatingsUseCaseRequest {
@@ -9,7 +9,7 @@ interface FetchRatingsUseCaseRequest {
 }
 
 interface FetchRatingsUseCaseResponse {
-  ratings: CompleteRating[]
+  ratings: RatingWithUserAndBook[]
 }
 
 export class FetchRatingsUseCase {
