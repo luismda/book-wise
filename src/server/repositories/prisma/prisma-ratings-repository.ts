@@ -25,11 +25,16 @@ export class PrismaRatingsRepository implements RatingsRepository {
 
   async findLastByUserId(userId: string) {
     const rating = await prisma.rating.findFirst({
+      select: {
+        id: true,
+        user_id: true,
+        rate: true,
+        description: true,
+        created_at: true,
+        book: true,
+      },
       where: {
         user_id: userId,
-      },
-      include: {
-        book: true,
       },
       orderBy: {
         created_at: 'desc',

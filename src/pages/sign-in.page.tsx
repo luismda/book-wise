@@ -1,10 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
-import { getServerSession } from 'next-auth'
 import { signIn } from 'next-auth/react'
 
-import { authOptions } from './api/auth/[...nextauth].api'
+import { getServerSession } from '@/server/lib/auth/session'
 
 import bookWiseLogoImg from '../assets/book-wise-logo.svg'
 import googleIconImg from '../assets/google-icon.svg'
@@ -71,7 +70,7 @@ export default function SignIn() {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions)
+  const session = await getServerSession(req, res)
 
   if (session) {
     return {
