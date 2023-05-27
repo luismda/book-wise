@@ -23,7 +23,7 @@ export class PrismaRatingsRepository implements RatingsRepository {
     return rating
   }
 
-  async findByUserId(userId: string) {
+  async findLastByUserId(userId: string) {
     const rating = await prisma.rating.findFirst({
       where: {
         user_id: userId,

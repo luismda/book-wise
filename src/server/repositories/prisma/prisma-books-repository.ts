@@ -47,7 +47,8 @@ export class PrismaBooksRepository implements BooksRepository {
           ON R.book_id = B.id
       WHERE
         B.id = ${id}
-      GROUP BY B.id
+      GROUP BY 
+        B.id
     `
 
     const bookWithSplitCategories = {

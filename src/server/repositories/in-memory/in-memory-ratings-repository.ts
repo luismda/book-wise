@@ -38,7 +38,7 @@ export class InMemoryRatingsRepository implements RatingsRepository {
     return rating
   }
 
-  async findByUserId(userId: string) {
+  async findLastByUserId(userId: string) {
     const rating = this.ratings
       .sort((a, b) => {
         const dateA = a.created_at.getTime()

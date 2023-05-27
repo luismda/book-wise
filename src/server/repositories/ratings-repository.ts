@@ -97,7 +97,7 @@ export interface RatingFindManyByBookIdParams {
 export interface RatingsRepository {
   findByUserIdAndBookId(userId: string, bookId: string): Promise<Rating | null>
 
-  findByUserId(userId: string): Promise<RatingWithBook | null>
+  findLastByUserId(userId: string): Promise<RatingWithBook | null>
 
   findManyByUserId(
     params: RatingFindManyByUserIdParams,
