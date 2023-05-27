@@ -96,7 +96,11 @@ export class PrismaRatingsRepository implements RatingsRepository {
 
   async findMany({ page, perPage }: RatingFindManyParams) {
     const ratings = await prisma.rating.findMany({
-      include: {
+      select: {
+        id: true,
+        rate: true,
+        description: true,
+        created_at: true,
         book: true,
         user: true,
       },
