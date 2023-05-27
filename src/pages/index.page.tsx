@@ -60,7 +60,7 @@ export default function Home({
       </header>
 
       <div className="mt-10 grid grid-cols-[1fr_20.25rem] gap-16">
-        <main>
+        <main className="space-y-10">
           {!!userLastRating && (
             <div>
               <div className="flex items-center justify-between">
@@ -89,7 +89,7 @@ export default function Home({
             </div>
           )}
 
-          <div className="mt-10">
+          <div>
             <div>
               <p className="text-sm leading-base">Avaliações mais recentes</p>
             </div>
@@ -175,7 +175,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const { ratings } = ratingsResponse.data
   const { books: popularBooks } = popularBooksResponse.data
 
-  let userLastRating = null
+  let userLastRating: UserLastRating | null = null
 
   if (session) {
     const userLastRatingResponse = await api.get<{ rating: UserLastRating }>(

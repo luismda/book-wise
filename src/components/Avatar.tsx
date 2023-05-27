@@ -16,7 +16,7 @@ export function Avatar({ size = 'md', avatarUrl }: AvatarProps) {
       })}
     >
       <Image
-        className="rounded-full object-cover"
+        className="rounded-full h-full object-cover"
         src={avatarUrl}
         alt=""
         width={72}
