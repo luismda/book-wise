@@ -104,7 +104,9 @@ export class PrismaBooksRepository implements BooksRepository {
           ON R.book_id = B.id
       GROUP BY
         B.id
-      ORDER BY COUNT(R.id) DESC
+      ORDER BY 
+        COUNT(R.id) DESC, 
+        IFNULL((SUM(R.rate)/COUNT(R.id)), 0) DESC
       LIMIT ${limit}
     `
 
