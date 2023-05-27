@@ -28,7 +28,7 @@ export class GetUserLastRatingUseCase {
       throw new ResourceNotFoundError('User')
     }
 
-    const rating = await this.ratingsRepository.findByUserId(userId)
+    const rating = await this.ratingsRepository.findLastByUserId(userId)
 
     return {
       rating,
