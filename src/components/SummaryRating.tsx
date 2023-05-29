@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import { BookCover } from './BookCover'
 import { RatingStarsView } from './RatingStarsView'
 
@@ -12,7 +14,7 @@ interface SummaryRatingProps {
   }
   rating: string
   ratingStarsAmount: number
-  createdAt: Date
+  createdAt: string
 }
 
 export function SummaryRating({
@@ -21,6 +23,8 @@ export function SummaryRating({
   ratingStarsAmount,
   createdAt,
 }: SummaryRatingProps) {
+  const distanceOfRatingDateToNow = dayjs(createdAt).fromNow()
+
   return (
     <article>
       <button
@@ -32,7 +36,7 @@ export function SummaryRating({
           <div>
             <div className="flex items-center justify-between">
               <time className="text-sm leading-base text-gray-300">
-                Há 2 dias
+                {distanceOfRatingDateToNow}
               </time>
               <RatingStarsView ratingStarsAmount={ratingStarsAmount} />
             </div>

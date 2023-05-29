@@ -84,7 +84,7 @@ export default function Home({
                 }}
                 rating={userLastRating.description}
                 ratingStarsAmount={userLastRating.rate}
-                createdAt={new Date(userLastRating.created_at)}
+                createdAt={userLastRating.created_at}
               />
             </div>
           )}
@@ -113,7 +113,7 @@ export default function Home({
                     }}
                     rating={rating.description}
                     ratingStarsAmount={rating.rate}
-                    createdAt={new Date(rating.created_at)}
+                    createdAt={rating.created_at}
                   />
                 )
               })}

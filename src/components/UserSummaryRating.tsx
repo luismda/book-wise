@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import { Avatar } from './Avatar'
 import { BookCover } from './BookCover'
 import { RatingStarsView } from './RatingStarsView'
@@ -17,7 +19,7 @@ interface UserSummaryRatingProps {
   }
   rating: string
   ratingStarsAmount: number
-  createdAt: Date
+  createdAt: string
 }
 
 export function UserSummaryRating({
@@ -27,6 +29,8 @@ export function UserSummaryRating({
   ratingStarsAmount,
   createdAt,
 }: UserSummaryRatingProps) {
+  const distanceOfRatingDateToNow = dayjs(createdAt).fromNow()
+
   return (
     <article className="flex flex-col gap-8 bg-gray-700 p-6 rounded-sm">
       <header className="flex items-start justify-between">
@@ -34,7 +38,9 @@ export function UserSummaryRating({
           <Avatar avatarUrl={user.avatarUrl} />
           <div>
             <span className="block leading-base">{user.name}</span>
-            <time className="text-sm leading-base text-gray-400">Hoje</time>
+            <time className="text-sm leading-base text-gray-400">
+              {distanceOfRatingDateToNow}
+            </time>
           </div>
         </div>
         <RatingStarsView ratingStarsAmount={ratingStarsAmount} />
