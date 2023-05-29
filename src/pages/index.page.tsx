@@ -2,11 +2,11 @@ import { GetServerSideProps } from 'next'
 import { CaretRight, ChartLineUp } from 'phosphor-react'
 
 import { getServerSession } from '@/server/lib/auth/session'
+import { fetchRatingsService } from '@/server/http/services/fetch-ratings'
+import { fetchPopularBooksService } from '@/server/http/services/fetch-popular-books'
+import { getUserLastRatingService } from '@/server/http/services/get-user-last-rating'
 
 import { DefaultLayout } from '@/layouts/DefaultLayout'
-
-import { api } from '@/lib/axios'
-
 import { Link } from '@/components/Link'
 import { BookCard } from '@/components/BookCard'
 import { SummaryRating } from '@/components/SummaryRating'
@@ -156,36 +156,20 @@ Home.layout = DefaultLayout
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res)
 
-  const ratingsRequest = api.get<{ ratings: Rating[] }>('/ratings')
+  const ratingsService = fetchRatingsService({ page: 1, perPage: 6 })
+  const popularBooksService = fetchPopularBooksService({ limit: 4 })
 
-  const popularBooksRequest = api.get<{ books: PopularBook[] }>(
-    '/books/populars',
-    {
-      params: {
-        limit: 4,
-      },
-    },
-  )
-
-  const [ratingsResponse, popularBooksResponse] = await Promise.all([
-    ratingsRequest,
-    popularBooksRequest,
+  const [ratings, popularBooks] = await Promise.all([
+    ratingsService,
+    popularBooksService,
   ])
 
-  const { ratings } = ratingsResponse.data
-  const { books: popularBooks } = popularBooksResponse.data
-
-  let userLastRating: UserLastRating | null = null
+  let userLastRating = null
 
   if (session) {
-    const userLastRatingResponse = await api.get<{ rating: UserLastRating }>(
-      '/ratings/users/last',
-      {
-        headers: req.headers,
-      },
-    )
-
-    userLastRating = userLastRatingResponse.data.rating
+    userLastRating = await getUserLastRatingService({
+      userId: session.user.id,
+    })
   }
 
   return {

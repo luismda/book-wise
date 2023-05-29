@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
-import { makeFetchPopularBooksUseCase } from '@/server/use-cases/factories/make-fetch-popular-books-use-case'
-import { excludeFields } from '@/server/utils/exclude-fields'
+import { fetchPopularBooksService } from '@/server/http/services/fetch-popular-books'
 
 export default async function handler(
   req: NextApiRequest,
@@ -27,17 +26,9 @@ export default async function handler(
 
   const { limit } = queryParamsValidation.data
 
-  const fetchPopularBooksUseCase = makeFetchPopularBooksUseCase()
-
-  const { books } = await fetchPopularBooksUseCase.execute({
-    limit,
-  })
-
-  const transformedBooks = books.map((book) => {
-    return excludeFields(book, ['created_at', 'summary', 'total_pages'])
-  })
+  const books = await fetchPopularBooksService({ limit })
 
   return res.json({
-    books: transformedBooks,
+    books,
   })
 }
