@@ -6,6 +6,7 @@ import {
 interface FetchRatingsUseCaseRequest {
   perPage: number
   page: number
+  excludedUserId?: string
 }
 
 interface FetchRatingsUseCaseResponse {
@@ -18,10 +19,12 @@ export class FetchRatingsUseCase {
   async execute({
     perPage,
     page,
+    excludedUserId,
   }: FetchRatingsUseCaseRequest): Promise<FetchRatingsUseCaseResponse> {
     const ratings = await this.ratingsRepository.findMany({
       perPage,
       page,
+      excludedUserId,
     })
 
     return {

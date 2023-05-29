@@ -4,17 +4,20 @@ import { excludeFields } from '@/server/utils/exclude-fields'
 interface FetchRatingsServiceParams {
   page: number
   perPage: number
+  excludedUserId?: string
 }
 
 export async function fetchRatingsService({
   page,
   perPage,
+  excludedUserId,
 }: FetchRatingsServiceParams) {
   const fetchRatingsUseCase = makeFetchRatingsUseCase()
 
   const { ratings } = await fetchRatingsUseCase.execute({
     page,
     perPage,
+    excludedUserId,
   })
 
   const transformedRatings = ratings.map((rating) => {

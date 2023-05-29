@@ -99,7 +99,7 @@ export class PrismaRatingsRepository implements RatingsRepository {
     return ratings
   }
 
-  async findMany({ page, perPage }: RatingFindManyParams) {
+  async findMany({ page, perPage, excludedUserId }: RatingFindManyParams) {
     const ratings = await prisma.rating.findMany({
       select: {
         id: true,
@@ -108,6 +108,11 @@ export class PrismaRatingsRepository implements RatingsRepository {
         created_at: true,
         book: true,
         user: true,
+      },
+      where: {
+        user_id: {
+          not: excludedUserId,
+        },
       },
       take: perPage,
       skip: (page - 1) * perPage,

@@ -95,6 +95,57 @@ describe('Fetch Ratings Use Case', () => {
     ])
   })
 
+  it('should be able to fetch ratings excluding a user ratings', async () => {
+    const firstUser = await usersRepository.create({
+      name: 'John Doe',
+    })
+
+    const secondUser = await usersRepository.create({
+      name: 'Evans Doe',
+    })
+
+    const book = await booksRepository.create({
+      name: 'Domain-Driven Design',
+      author: 'Eric Evans',
+      cover_url: 'Some book cover...',
+      summary: 'Some description...',
+      total_pages: 529,
+    })
+
+    await ratingsRepository.create({
+      user_id: firstUser.id,
+      book_id: book.id,
+      rate: 5,
+      description: 'Very interesting...',
+    })
+
+    await ratingsRepository.create({
+      user_id: secondUser.id,
+      book_id: book.id,
+      rate: 4,
+      description: 'Very interesting...',
+    })
+
+    const { ratings } = await sut.execute({
+      excludedUserId: firstUser.id,
+      perPage: 6,
+      page: 1,
+    })
+
+    expect(ratings).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        rate: 4,
+        user: expect.objectContaining({
+          id: secondUser.id,
+        }),
+        book: expect.objectContaining({
+          id: book.id,
+        }),
+      }),
+    ])
+  })
+
   it('should be able to fetch paginated ratings', async () => {
     vi.setSystemTime(new Date(2023, 4, 13, 12, 30, 0))
 

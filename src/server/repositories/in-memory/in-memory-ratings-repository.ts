@@ -140,7 +140,7 @@ export class InMemoryRatingsRepository implements RatingsRepository {
     return ratingsWithUser
   }
 
-  async findMany({ perPage, page }: RatingFindManyParams) {
+  async findMany({ perPage, page, excludedUserId }: RatingFindManyParams) {
     const ratings = this.ratings
       .sort((a, b) => {
         const dateA = a.created_at.getTime()
@@ -149,6 +149,13 @@ export class InMemoryRatingsRepository implements RatingsRepository {
         return dateB - dateA
       })
       .slice((page - 1) * perPage, page * perPage)
+      .filter((rating) => {
+        if (excludedUserId) {
+          return rating.user_id !== excludedUserId
+        }
+
+        return true
+      })
 
     const users = (await this.usersRepository?.list()) ?? []
     const books = (await this.booksRepository?.list()) ?? []

@@ -156,7 +156,11 @@ Home.layout = DefaultLayout
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res)
 
-  const ratingsService = fetchRatingsService({ page: 1, perPage: 6 })
+  const ratingsService = fetchRatingsService({
+    page: 1,
+    perPage: 6,
+    excludedUserId: session ? session.user.id : undefined,
+  })
   const popularBooksService = fetchPopularBooksService({ limit: 4 })
 
   const [ratings, popularBooks] = await Promise.all([

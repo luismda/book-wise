@@ -79,6 +79,7 @@ export interface RatingCreateInput {
 export interface RatingFindManyParams {
   perPage: number
   page: number
+  excludedUserId?: string
 }
 
 export interface RatingFindManyByUserIdParams {
