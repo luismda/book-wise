@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import {
   Book,
   BookCreateInput,
@@ -60,6 +61,10 @@ export class PrismaBooksRepository implements BooksRepository {
   }
 
   async findMany({ page, perPage, categoriesId, query }: BookFindManyParams) {
+    const categoriesIdAsString = categoriesId?.join(',') ?? ''
+    const queryToFilterByCategories = Prisma.sql`AND (SELECT IF(COUNT(CB.category_id) > 0, 1, 0) FROM categories_on_books CB WHERE CB.book_id = B.id AND CB.category_id IN (${categoriesIdAsString}))`
+    const queryToFilterBySearchQuery = Prisma.sql`AND (B.name LIKE '%${query}%' OR B.author LIKE '%${query}%')`
+
     const books = await prisma.$queryRaw<BookWithAverageGrade[]>`
       SELECT
         B.*,
@@ -71,18 +76,8 @@ export class PrismaBooksRepository implements BooksRepository {
           ON R.book_id = B.id
       WHERE
         1=1
-        ${
-          categoriesId
-            ? `AND (SELECT IF(COUNT(CB.category_id) > 0, 1, 0) FROM categories_on_books CB WHERE CB.book_id = B.id AND CB.category_id IN (${categoriesId.join(
-                ',',
-              )}))`
-            : ''
-        }
-        ${
-          query
-            ? `AND (B.name LIKE '%${query}%' OR B.author LIKE '%${query}%')`
-            : ''
-        }
+        ${categoriesId ? queryToFilterByCategories : Prisma.empty}
+        ${query ? queryToFilterBySearchQuery : Prisma.empty}
       GROUP BY
         B.id
       LIMIT ${perPage}

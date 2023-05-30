@@ -1,4 +1,8 @@
+import { GetStaticProps } from 'next'
 import { Binoculars, MagnifyingGlass } from 'phosphor-react'
+
+import { fetchCategoriesService } from '@/server/http/services/fetch-categories'
+import { fetchBooksService } from '@/server/http/services/fetch-books'
 
 import { DefaultLayout } from '@/layouts/DefaultLayout'
 import { BookCard } from '@/components/BookCard'
@@ -6,9 +10,25 @@ import { CategoryTag } from '@/components/CategoryTag'
 import { TextInput } from '@/components/TextInput'
 import { Heading } from '@/components/Heading'
 
-import bookImg from '../../public/images/books/domain-driven-design.png'
+interface Category {
+  id: string
+  name: string
+}
 
-export default function Explore() {
+interface Book {
+  id: string
+  name: string
+  author: string
+  cover_url: string
+  average_grade: number
+}
+
+interface ExploreProps {
+  categories: Category[]
+  books: Book[]
+}
+
+export default function Explore({ categories, books }: ExploreProps) {
   return (
     <div>
       <header className="flex items-center justify-between">
@@ -39,76 +59,53 @@ export default function Explore() {
         <CategoryTag isChecked onCheckedChange={() => {}}>
           Tudo
         </CategoryTag>
-        <CategoryTag isChecked={false} onCheckedChange={() => {}}>
-          Computação
-        </CategoryTag>
-        <CategoryTag isChecked={false} onCheckedChange={() => {}}>
-          Educação
-        </CategoryTag>
-        <CategoryTag isChecked={false} onCheckedChange={() => {}}>
-          Educação
-        </CategoryTag>
-        <CategoryTag isChecked={false} onCheckedChange={() => {}}>
-          Educação
-        </CategoryTag>
-        <CategoryTag isChecked={false} onCheckedChange={() => {}}>
-          Educação
-        </CategoryTag>
-        <CategoryTag isChecked={false} onCheckedChange={() => {}}>
-          Educação
-        </CategoryTag>
-        <CategoryTag isChecked={false} onCheckedChange={() => {}}>
-          Educação
-        </CategoryTag>
-        <CategoryTag isChecked={false} onCheckedChange={() => {}}>
-          Educação
-        </CategoryTag>
+
+        {categories.map(({ id, name }) => {
+          return (
+            <CategoryTag key={id} isChecked={false} onCheckedChange={() => {}}>
+              {name}
+            </CategoryTag>
+          )
+        })}
       </div>
 
       <main className="mt-13 grid grid-cols-3 gap-5">
-        <BookCard
-          name="Domain-Driven Design"
-          author="Eric Evans"
-          ratingStarsAmount={4}
-          cover={{
-            url: bookImg.src,
-            altText: '',
-            size: 'md',
-          }}
-        />
-        <BookCard
-          name="Domain-Driven Design"
-          author="Eric Evans"
-          ratingStarsAmount={4}
-          cover={{
-            url: bookImg.src,
-            altText: '',
-            size: 'md',
-          }}
-        />
-        <BookCard
-          name="Domain-Driven Design"
-          author="Eric Evans"
-          ratingStarsAmount={4}
-          cover={{
-            url: bookImg.src,
-            altText: '',
-            size: 'md',
-          }}
-        />
-        <BookCard
-          name="Domain-Driven Design"
-          author="Eric Evans"
-          ratingStarsAmount={4}
-          cover={{
-            url: bookImg.src,
-            altText: '',
-            size: 'md',
-          }}
-        />
+        {books.map((book) => {
+          return (
+            <BookCard
+              key={book.id}
+              name={book.name}
+              author={book.author}
+              ratingStarsAmount={book.average_grade}
+              cover={{
+                url: book.cover_url,
+                altText: '',
+                size: 'md',
+              }}
+            />
+          )
+        })}
       </main>
     </div>
   )
 }
 
 Explore.layout = DefaultLayout
+
+export const getStaticProps: GetStaticProps = async () => {
+  const categoriesService = fetchCategoriesService()
+  const booksService = fetchBooksService({ page: 1, perPage: 12 })
+
+  const [categories, books] = await Promise.all([
+    categoriesService,
+    booksService,
+  ])
+
+  return {
+    props: {
+      categories,
+      books,
+    },
+    revalidate: 60 * 10, // 10 minutes
+  }
+}
