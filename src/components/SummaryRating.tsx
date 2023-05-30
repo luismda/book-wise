@@ -29,10 +29,10 @@ export function SummaryRating({
     <article>
       <button
         type="button"
-        className="mt-4 w-full flex gap-6 items-stretch bg-gray-600 px-6 py-5 rounded-sm transition-colors outline-none border-2 border-transparent hover:border-gray-500 focus:border-gray-500"
+        className="mt-4 flex w-full items-stretch gap-6 rounded-sm border-2 border-transparent bg-gray-600 px-6 py-5 outline-none transition-colors hover:border-gray-500 focus:border-gray-500"
       >
         <BookCover bookCoverUrl={book.cover.url} altText={book.cover.altText} />
-        <div className="w-full flex flex-col justify-between text-left">
+        <div className="flex w-full flex-col justify-between text-left">
           <div>
             <div className="flex items-center justify-between">
               <time className="text-sm leading-base text-gray-300">
@@ -41,7 +41,7 @@ export function SummaryRating({
               <RatingStarsView ratingStarsAmount={ratingStarsAmount} />
             </div>
 
-            <strong className="block mt-3 font-bold leading-short">
+            <strong className="mt-3 block font-bold leading-short">
               {book.name}
             </strong>
             <span className="text-sm leading-base text-gray-400">
@@ -49,7 +49,7 @@ export function SummaryRating({
             </span>
           </div>
 
-          <p className="text-sm leading-base text-gray-300 line-clamp-2">
+          <p className="line-clamp-2 text-sm leading-base text-gray-300">
             {rating}
           </p>
         </div>

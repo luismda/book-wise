@@ -21,9 +21,9 @@ export default function SignIn() {
   }
 
   return (
-    <div className="w-full h-screen max-w-8xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[42%_1fr]">
+    <div className="mx-auto grid h-screen w-full max-w-8xl grid-cols-1 px-4 md:grid-cols-[42%_1fr]">
       <div className="py-5">
-        <div className="h-full flex items-center justify-center bg-sign-in-cover bg-cover bg-center rounded-sm">
+        <div className="flex h-full items-center justify-center rounded-sm bg-sign-in-cover bg-cover bg-center">
           <Image
             src={bookWiseLogoImg}
             alt="Logo da plataforma BookWise representada pelo desenho de um livro com um marcador de páginas no canto superior esquerdo e um coração pequeno no canto inferior direito do livro, com o texto BookWise escrito ao lado direito desse livro fazendo um gradiente da cor azul claro para um roxo mais claro."

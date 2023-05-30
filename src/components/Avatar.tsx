@@ -10,13 +10,13 @@ export function Avatar({ size = 'md', avatarUrl }: AvatarProps) {
   return (
     <div
       className={clsx('rounded-full bg-gradient-vertical p-[2px]', {
-        'w-8 h-8': size === 'sm',
-        'w-10 h-10': size === 'md',
-        'w-18 h-18': size === 'lg',
+        'h-8 w-8': size === 'sm',
+        'h-10 w-10': size === 'md',
+        'h-18 w-18': size === 'lg',
       })}
     >
       <Image
-        className="rounded-full h-full object-cover"
+        className="h-full rounded-full object-cover"
         src={avatarUrl}
         alt=""
         width={72}

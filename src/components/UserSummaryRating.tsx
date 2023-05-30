@@ -32,7 +32,7 @@ export function UserSummaryRating({
   const distanceOfRatingDateToNow = dayjs(createdAt).fromNow()
 
   return (
-    <article className="flex flex-col gap-8 bg-gray-700 p-6 rounded-sm">
+    <article className="flex flex-col gap-8 rounded-sm bg-gray-700 p-6">
       <header className="flex items-start justify-between">
         <div className="flex items-start gap-4">
           <Avatar avatarUrl={user.avatarUrl} />
@@ -57,7 +57,7 @@ export function UserSummaryRating({
             </span>
           </div>
 
-          <p className="text-sm leading-base text-gray-300 line-clamp-4">
+          <p className="line-clamp-4 text-sm leading-base text-gray-300">
             {rating}
           </p>
         </div>

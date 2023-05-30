@@ -23,9 +23,9 @@ export function RatingStarsView({
             key={i}
             weight={i + 1 <= ratingStarsAmount ? 'fill' : 'regular'}
             className={clsx('text-purple-100', {
-              'w-4 h-4': size === 'sm',
-              'w-5 h-5': size === 'md',
-              'w-7 h-7': size === 'lg',
+              'h-4 w-4': size === 'sm',
+              'h-5 w-5': size === 'md',
+              'h-7 w-7': size === 'lg',
             })}
           />
         )

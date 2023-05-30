@@ -10,7 +10,7 @@ function Root({ asChild = false, ...props }: RootProps) {
 
   return (
     <Component
-      className="flex items-center gap-5 px-6 py-5 rounded-sm bg-gray-600 text-lg font-bold leading-base text-gray-200 outline-none transition-colors border-2 border-transparent hover:border-gray-500 focus:border-gray-500"
+      className="flex items-center gap-5 rounded-sm border-2 border-transparent bg-gray-600 px-6 py-5 text-lg font-bold leading-base text-gray-200 outline-none transition-colors hover:border-gray-500 focus:border-gray-500"
       {...props}
     />
   )
@@ -21,7 +21,7 @@ interface IconProps {
 }
 
 function Icon({ children }: IconProps) {
-  return <Slot className="w-8 h-8">{children}</Slot>
+  return <Slot className="h-8 w-8">{children}</Slot>
 }
 
 export const SignInProviderButton = {

@@ -7,12 +7,12 @@ interface DefaultLayoutProps {
 
 export function DefaultLayout({ children }: DefaultLayoutProps) {
   return (
-    <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-[15.75rem_1fr]">
+    <div className="mx-auto grid max-w-8xl grid-cols-1 lg:grid-cols-[15.75rem_1fr]">
       <div className="lg:pl-5">
         <Sidebar />
       </div>
 
-      <div className="w-full px-24 pt-18 pb-10">{children}</div>
+      <div className="w-full px-24 pb-10 pt-18">{children}</div>
     </div>
   )
 }

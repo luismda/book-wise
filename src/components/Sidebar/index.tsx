@@ -13,7 +13,7 @@ export function Sidebar() {
   const isUserAuthenticated = session.status === 'authenticated'
 
   return (
-    <aside className="w-full lg:w-58 fixed lg:top-5 lg:bottom-4 px-13 pt-10 pb-6 rounded-md flex lg:flex-col justify-between items-center bg-sidebar-gradient bg-no-repeat bg-[length:100%_100%]">
+    <aside className="fixed flex w-full items-center justify-between rounded-md bg-sidebar-gradient bg-[length:100%_100%] bg-no-repeat px-13 pb-6 pt-10 lg:bottom-4 lg:top-5 lg:w-58 lg:flex-col">
       <div className="flex gap-6 lg:flex-col lg:gap-[0]">
         <Image
           src={bookWiseLogoImg}

@@ -12,10 +12,10 @@ export function NavLink({ icon: Icon, children, ...props }: NavLinkProps) {
   return (
     <Link
       data-active={hrefPathname === props.href}
-      className="flex items-center gap-3 py-2 text-gray-400 leading-base outline-none before:content-[''] before:w-1 before:bg-transparent before:rounded-full before:h-6 before:mr-1 transition-colors hover:text-gray-100 focus:underline focus:text-gray-100 data-[active=true]:text-gray-100 data-[active=true]:font-bold data-[active=true]:before:bg-gradient-vertical"
+      className="flex items-center gap-3 py-2 leading-base text-gray-400 outline-none transition-colors before:mr-1 before:h-6 before:w-1 before:rounded-full before:bg-transparent before:content-[''] hover:text-gray-100 focus:text-gray-100 focus:underline data-[active=true]:font-bold data-[active=true]:text-gray-100 data-[active=true]:before:bg-gradient-vertical"
       {...props}
     >
-      <Icon className="w-6 h-6" />
+      <Icon className="h-6 w-6" />
       {children}
     </Link>
   )

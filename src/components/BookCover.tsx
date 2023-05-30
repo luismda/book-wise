@@ -19,10 +19,10 @@ export function BookCover({
       width={172}
       height={242}
       className={clsx('rounded-xs', {
-        'w-16 h-[5.875rem]': size === 'xs',
-        'w-24 h-[8.375rem]': size === 'sm',
-        'w-27 h-[9.5rem]': size === 'md',
-        'w-43 h-[15.125rem]': size === 'lg',
+        'h-[5.875rem] w-16': size === 'xs',
+        'h-[8.375rem] w-24': size === 'sm',
+        'h-[9.5rem] w-27': size === 'md',
+        'h-[15.125rem] w-43': size === 'lg',
       })}
     />
   )

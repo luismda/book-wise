@@ -54,8 +54,8 @@ export default function Home({
     <div>
       <header>
         <div className="flex items-center gap-3">
-          <ChartLineUp className="w-8 h-8 text-green-100" />
-          <h1 className="font-bold text-2xl leading-short">Início</h1>
+          <ChartLineUp className="h-8 w-8 text-green-100" />
+          <h1 className="text-2xl font-bold leading-short">Início</h1>
         </div>
       </header>
 

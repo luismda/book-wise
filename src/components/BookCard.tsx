@@ -27,9 +27,9 @@ export function BookCard({
       <button
         type="button"
         className={clsx(
-          'w-full relative flex items-stretch gap-5 bg-gray-700 px-5 py-4 rounded-sm cursor-pointer outline-none border-2 border-transparent transition-colors hover:border-gray-600 focus:border-gray-600',
+          'relative flex w-full cursor-pointer items-stretch gap-5 rounded-sm border-2 border-transparent bg-gray-700 px-5 py-4 outline-none transition-colors hover:border-gray-600 focus:border-gray-600',
           {
-            'before:transition-opacity hover:before:opacity-0 before:content-["LIDO"] before:absolute before:right-[-1.5px] before:top-[-1.5px] before:rounded-tr-xs before:rounded-bl-xs before:px-3 before:py-1 before:bg-green-300 before:text-green-100 before:text-xs before:font-bold before:leading-shorter':
+            'before:absolute before:right-[-1.5px] before:top-[-1.5px] before:rounded-bl-xs before:rounded-tr-xs before:bg-green-300 before:px-3 before:py-1 before:text-xs before:font-bold before:leading-shorter before:text-green-100 before:transition-opacity before:content-["LIDO"] hover:before:opacity-0':
               hasAlreadyBeenRead,
           },
         )}
