@@ -11,6 +11,7 @@ import { Link } from '@/components/Link'
 import { BookCard } from '@/components/BookCard'
 import { SummaryRating } from '@/components/SummaryRating'
 import { UserSummaryRating } from '@/components/UserSummaryRating'
+import { Heading } from '@/components/Heading'
 
 interface Book {
   id: string
@@ -53,10 +54,13 @@ export default function Home({
   return (
     <div>
       <header>
-        <div className="flex items-center gap-3">
-          <ChartLineUp className="h-8 w-8 text-green-100" />
-          <h1 className="text-2xl font-bold leading-short">Início</h1>
-        </div>
+        <Heading.Root>
+          <Heading.Icon>
+            <ChartLineUp />
+          </Heading.Icon>
+
+          <Heading.Title>Início</Heading.Title>
+        </Heading.Root>
       </header>
 
       <div className="mt-10 grid grid-cols-[1fr_20.25rem] gap-16">
