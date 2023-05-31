@@ -43,13 +43,19 @@ export default function Explore({ categories, books }: ExploreProps) {
         <form className="w-full max-w-[420px]">
           <TextInput.Root iconPosition="right">
             <TextInput.Input
-              type="text"
+              type="search"
               placeholder="Buscar livro ou autor"
               aria-label="Digite o nome de um livro ou de um autor para buscar"
             />
 
             <TextInput.Icon>
-              <MagnifyingGlass />
+              <button
+                type="submit"
+                aria-label="Buscar livros"
+                className="leading-[0] outline-none"
+              >
+                <MagnifyingGlass className="h-full w-full" />
+              </button>
             </TextInput.Icon>
           </TextInput.Root>
         </form>
