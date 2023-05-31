@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
-import { fetchPopularBooksService } from '@/server/http/services/fetch-popular-books'
+import { fetchBooksService } from '@/server/http/services/fetch-books'
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,7 +12,10 @@ export default async function handler(
   }
 
   const queryParamsSchema = z.object({
-    limit: z.coerce.number().default(4),
+    page: z.coerce.number().default(1),
+    per_page: z.coerce.number().default(12),
+    categories: z.array(z.string().uuid()).optional(),
+    query: z.string().optional(),
   })
 
   const queryParamsValidation = queryParamsSchema.safeParse(req.query)
@@ -24,11 +27,16 @@ export default async function handler(
     })
   }
 
-  const { limit } = queryParamsValidation.data
+  const { page, per_page, categories, query } = queryParamsValidation.data
 
-  const books = await fetchPopularBooksService({ limit })
+  const books = await fetchBooksService({
+    page,
+    perPage: per_page,
+    categoriesId: categories,
+    query,
+  })
 
-  return res.json({
+  res.json({
     books,
   })
 }
