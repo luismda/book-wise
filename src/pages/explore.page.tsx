@@ -56,13 +56,22 @@ export default function Explore({ categories, books }: ExploreProps) {
       </header>
 
       <div className="mt-10 flex flex-wrap items-center gap-3">
-        <CategoryTag isChecked onCheckedChange={() => {}}>
+        <CategoryTag
+          aria-label="Livros de todas as categorias"
+          defaultChecked
+          onCheckedChange={() => {}}
+        >
           Tudo
         </CategoryTag>
 
         {categories.map(({ id, name }) => {
           return (
-            <CategoryTag key={id} isChecked={false} onCheckedChange={() => {}}>
+            <CategoryTag
+              key={id}
+              aria-label={`Livros da categoria de ${name}`}
+              defaultChecked={false}
+              onCheckedChange={() => {}}
+            >
               {name}
             </CategoryTag>
           )
