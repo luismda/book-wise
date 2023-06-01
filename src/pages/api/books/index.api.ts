@@ -14,7 +14,13 @@ export default async function handler(
   const queryParamsSchema = z.object({
     page: z.coerce.number().default(1),
     per_page: z.coerce.number().default(12),
-    categories: z.array(z.string().uuid()).optional(),
+    categories: z
+      .array(z.string().uuid())
+      .or(z.string().uuid())
+      .optional()
+      .transform((categories) =>
+        typeof categories === 'string' ? [categories] : categories,
+      ),
     query: z.string().optional(),
   })
 

@@ -61,9 +61,11 @@ export class PrismaBooksRepository implements BooksRepository {
   }
 
   async findMany({ page, perPage, categoriesId, query }: BookFindManyParams) {
-    const categoriesIdAsString = categoriesId?.join(',') ?? ''
+    const categoriesIdAsString = Prisma.join(categoriesId ?? [''], ',')
+    const queryString = `%${query}%`
+
     const queryToFilterByCategories = Prisma.sql`AND (SELECT IF(COUNT(CB.category_id) > 0, 1, 0) FROM categories_on_books CB WHERE CB.book_id = B.id AND CB.category_id IN (${categoriesIdAsString}))`
-    const queryToFilterBySearchQuery = Prisma.sql`AND (B.name LIKE '%${query}%' OR B.author LIKE '%${query}%')`
+    const queryToFilterBySearchQuery = Prisma.sql`AND (B.name LIKE ${queryString} OR B.author LIKE ${queryString})`
 
     const books = await prisma.$queryRaw<BookWithAverageGrade[]>`
       SELECT

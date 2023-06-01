@@ -1,14 +1,19 @@
+import { useState } from 'react'
 import { GetStaticProps } from 'next'
-import { Binoculars, MagnifyingGlass } from 'phosphor-react'
+import { Binoculars } from 'phosphor-react'
+import { useQuery } from '@tanstack/react-query'
+import qs from 'qs'
 
 import { fetchCategoriesService } from '@/server/http/services/fetch-categories'
 import { fetchBooksService } from '@/server/http/services/fetch-books'
 
+import { api } from '@/lib/axios'
+
 import { DefaultLayout } from '@/layouts/DefaultLayout'
 import { BookCard } from '@/components/BookCard'
 import { CategoryTag } from '@/components/CategoryTag'
-import { TextInput } from '@/components/TextInput'
 import { Heading } from '@/components/Heading'
+import { SearchForm, SearchFormData } from '@/components/SearchForm'
 
 interface Category {
   id: string
@@ -25,10 +30,55 @@ interface Book {
 
 interface ExploreProps {
   categories: Category[]
-  books: Book[]
+  initialBooks: Book[]
 }
 
-export default function Explore({ categories, books }: ExploreProps) {
+export default function Explore({ categories, initialBooks }: ExploreProps) {
+  const [search, setSearch] = useState('')
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+
+  const { data: filteredBooks } = useQuery(
+    ['books', search, selectedCategories.join(',')],
+    async () => {
+      const response = await api.get<{ books: Book[] }>('/books', {
+        params: {
+          query: search,
+          categories: selectedCategories,
+        },
+        paramsSerializer(params) {
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        },
+      })
+
+      const { books } = response.data
+
+      return books
+    },
+    {
+      enabled: !!search || !!selectedCategories.length,
+    },
+  )
+
+  function handleSubmitSearchForm({ search }: SearchFormData) {
+    setSearch(search)
+  }
+
+  function handleToggleCheckedCategory(categoryId: string) {
+    setSelectedCategories((categories) => {
+      if (categories.includes(categoryId)) {
+        return categories.filter((category) => category !== categoryId)
+      }
+
+      return [...categories, categoryId]
+    })
+  }
+
+  function handleClearAllSelectedCategories() {
+    setSelectedCategories([])
+  }
+
+  const books = filteredBooks ?? initialBooks
+
   return (
     <div>
       <header className="flex items-center justify-between">
@@ -40,32 +90,14 @@ export default function Explore({ categories, books }: ExploreProps) {
           <Heading.Title>Explorar</Heading.Title>
         </Heading.Root>
 
-        <form className="w-full max-w-[420px]">
-          <TextInput.Root iconPosition="right">
-            <TextInput.Input
-              type="search"
-              placeholder="Buscar livro ou autor"
-              aria-label="Digite o nome de um livro ou de um autor para buscar"
-            />
-
-            <TextInput.Icon>
-              <button
-                type="submit"
-                aria-label="Buscar livros"
-                className="leading-[0] outline-none"
-              >
-                <MagnifyingGlass className="h-full w-full" />
-              </button>
-            </TextInput.Icon>
-          </TextInput.Root>
-        </form>
+        <SearchForm onSubmit={handleSubmitSearchForm} />
       </header>
 
       <div className="mt-10 flex flex-wrap items-center gap-3">
         <CategoryTag
           aria-label="Livros de todas as categorias"
-          defaultChecked
-          onCheckedChange={() => {}}
+          checked={selectedCategories.length === 0}
+          onCheckedChange={handleClearAllSelectedCategories}
         >
           Tudo
         </CategoryTag>
@@ -75,8 +107,8 @@ export default function Explore({ categories, books }: ExploreProps) {
             <CategoryTag
               key={id}
               aria-label={`Livros da categoria de ${name}`}
-              defaultChecked={false}
-              onCheckedChange={() => {}}
+              checked={selectedCategories.includes(id)}
+              onCheckedChange={() => handleToggleCheckedCategory(id)}
             >
               {name}
             </CategoryTag>
@@ -119,7 +151,7 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       categories,
-      books,
+      initialBooks: books,
     },
     revalidate: 60 * 10, // 10 minutes
   }

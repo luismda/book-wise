@@ -5,6 +5,9 @@ import type { AppProps } from 'next/app'
 import { ElementType, Fragment, ReactNode } from 'react'
 import { Nunito_Sans } from 'next/font/google'
 import { SessionProvider } from 'next-auth/react'
+import { QueryClientProvider } from '@tanstack/react-query'
+
+import { queryClient } from '@/lib/react-query'
 
 const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
@@ -25,11 +28,13 @@ export default function App({
 
   return (
     <SessionProvider session={session}>
-      <div className={nunitoSans.className}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </div>
+      <QueryClientProvider client={queryClient}>
+        <div className={nunitoSans.className}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </div>
+      </QueryClientProvider>
     </SessionProvider>
   )
 }

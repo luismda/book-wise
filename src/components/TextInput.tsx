@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, ReactNode } from 'react'
+import { ForwardedRef, InputHTMLAttributes, ReactNode, forwardRef } from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { clsx } from 'clsx'
 
@@ -23,16 +23,23 @@ function TextInputRoot({ children, iconPosition }: TextInputRootProps) {
   )
 }
 
+TextInputRoot.displayName = 'TextInput.Root'
+
 interface TextInputInputProps extends InputHTMLAttributes<HTMLInputElement> {}
 
-function TextInputInput(props: TextInputInputProps) {
-  return (
-    <input
-      className="w-full border-0 bg-transparent px-5 py-3 text-sm text-gray-200 outline-none placeholder:text-gray-400 group-[.group-left-icon]:pl-[2.625rem] group-[.group-right-icon]:pr-[2.625rem]"
-      {...props}
-    />
-  )
-}
+const TextInputInput = forwardRef(
+  (props: TextInputInputProps, ref: ForwardedRef<HTMLInputElement>) => {
+    return (
+      <input
+        className="w-full border-0 bg-transparent px-5 py-3 text-sm text-gray-200 outline-none placeholder:text-gray-400 group-[.group-left-icon]:pl-[2.625rem] group-[.group-right-icon]:pr-[2.625rem]"
+        {...props}
+        ref={ref}
+      />
+    )
+  },
+)
+
+TextInputInput.displayName = 'TextInput.Input'
 
 interface TextInputIconProps {
   children: ReactNode
@@ -45,6 +52,8 @@ function TextInputIcon({ children }: TextInputIconProps) {
     </Slot>
   )
 }
+
+TextInputRoot.displayName = 'TextInput.Icon'
 
 export const TextInput = {
   Root: TextInputRoot,
