@@ -13,7 +13,10 @@ import { DefaultLayout } from '@/layouts/DefaultLayout'
 import { BookCard } from '@/components/BookCard'
 import { CategoryTag } from '@/components/CategoryTag'
 import { Heading } from '@/components/Heading'
-import { SearchForm, SearchFormData } from '@/components/SearchForm'
+import {
+  BooksSearchForm,
+  BooksSearchFormData,
+} from '@/components/BooksSearchForm'
 
 interface Category {
   id: string
@@ -59,7 +62,7 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
     },
   )
 
-  function handleSubmitSearchForm({ search }: SearchFormData) {
+  function handleSubmitBooksSearchForm({ search }: BooksSearchFormData) {
     setSearch(search)
   }
 
@@ -81,7 +84,7 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
 
   return (
     <div>
-      <header className="flex items-center justify-between">
+      <header className="flex items-start justify-between">
         <Heading.Root>
           <Heading.Icon>
             <Binoculars />
@@ -90,7 +93,9 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
           <Heading.Title>Explorar</Heading.Title>
         </Heading.Root>
 
-        <SearchForm onSubmit={handleSubmitSearchForm} />
+        <div className="w-full max-w-[420px]">
+          <BooksSearchForm onSubmit={handleSubmitBooksSearchForm} />
+        </div>
       </header>
 
       <div className="mt-10 flex flex-wrap items-center gap-3">

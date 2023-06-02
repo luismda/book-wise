@@ -51,21 +51,28 @@ export class PrismaRatingsRepository implements RatingsRepository {
     perPage,
   }: RatingFindManyByUserIdParams) {
     const ratings = await prisma.rating.findMany({
+      select: {
+        id: true,
+        user_id: true,
+        rate: true,
+        description: true,
+        created_at: true,
+        book: true,
+      },
       where: {
         user_id: userId,
-        book: {
-          name: {
-            contains: query,
-          },
-          OR: {
-            author: {
-              contains: query,
-            },
-          },
-        },
-      },
-      include: {
-        book: true,
+        book: query
+          ? {
+              name: {
+                contains: query,
+              },
+              OR: {
+                author: {
+                  contains: query,
+                },
+              },
+            }
+          : undefined,
       },
       take: perPage,
       skip: (page - 1) * perPage,
@@ -125,7 +132,9 @@ export class PrismaRatingsRepository implements RatingsRepository {
   }
 
   async countMetricsByUserId(userId: string) {
-    const ratingsMetricsOfUser = await prisma.$queryRaw<RatingsMetricsOfUser>`
+    const [ratingsMetricsOfUser] = await prisma.$queryRaw<
+      RatingsMetricsOfUser[]
+    >`
       SELECT 
         COUNT(R.id) ratings_amount,
         SUM(B.total_pages) amount_of_pages_read,
@@ -154,9 +163,20 @@ export class PrismaRatingsRepository implements RatingsRepository {
           ON B.id = R.book_id
       WHERE
         R.user_id = ${userId}
+      GROUP BY 
+        R.user_id
     `
 
-    return ratingsMetricsOfUser
+    const ratingsMetricsOfUserWithoutBigInt = {
+      ...ratingsMetricsOfUser,
+      ratings_amount: Number(ratingsMetricsOfUser.ratings_amount),
+      amount_of_authors_read: Number(
+        ratingsMetricsOfUser.amount_of_authors_read,
+      ),
+      amount_of_pages_read: Number(ratingsMetricsOfUser.amount_of_pages_read),
+    }
+
+    return ratingsMetricsOfUserWithoutBigInt
   }
 
   async create(data: RatingCreateInput) {

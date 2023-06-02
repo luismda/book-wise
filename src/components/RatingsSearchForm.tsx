@@ -5,35 +5,35 @@ import { z } from 'zod'
 
 import { TextInput } from './TextInput'
 
-const searchFormSchema = z.object({
+const ratingsSearchFormSchema = z.object({
   search: z.string(),
 })
 
-export type SearchFormData = z.infer<typeof searchFormSchema>
+export type RatingsSearchFormData = z.infer<typeof ratingsSearchFormSchema>
 
-interface SearchFormProps {
-  onSubmit: (data: SearchFormData) => void
+interface RatingsSearchFormProps {
+  onSubmit: (data: RatingsSearchFormData) => void
 }
 
-export function SearchForm({ onSubmit }: SearchFormProps) {
-  const { register, handleSubmit } = useForm<SearchFormData>({
-    resolver: zodResolver(searchFormSchema),
+export function RatingsSearchForm({ onSubmit }: RatingsSearchFormProps) {
+  const { register, handleSubmit } = useForm<RatingsSearchFormData>({
+    resolver: zodResolver(ratingsSearchFormSchema),
   })
 
   return (
-    <form className="w-full max-w-[420px]" onSubmit={handleSubmit(onSubmit)}>
+    <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
       <TextInput.Root iconPosition="right">
         <TextInput.Input
           type="text"
-          placeholder="Buscar livro ou autor"
-          aria-label="Digite o nome de um livro ou de um autor para buscar"
+          placeholder="Buscar livro avaliado"
+          aria-label="Digite o nome de um livro ou de um autor para buscar avaliações"
           {...register('search')}
         />
 
         <TextInput.Icon>
           <button
             type="submit"
-            aria-label="Buscar livros"
+            aria-label="Buscar livros avaliados"
             className="leading-[0] outline-none"
           >
             <MagnifyingGlass className="h-full w-full" />
