@@ -12,8 +12,8 @@ export default async function handler(
   }
 
   const queryParamsSchema = z.object({
-    page: z.coerce.number().default(1),
-    per_page: z.coerce.number().default(12),
+    page: z.coerce.number().min(1).default(1),
+    per_page: z.coerce.number().min(1).default(12),
     categories: z
       .array(z.string().uuid())
       .or(z.string().uuid())

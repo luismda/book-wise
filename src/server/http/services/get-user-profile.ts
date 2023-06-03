@@ -15,7 +15,7 @@ export async function getUserProfileService({
   })
 
   const userWithoutIdAndEmail = {
-    ...excludeFields(user, ['id', 'email']),
+    ...excludeFields(user, ['email']),
     created_at: user.created_at.toISOString(),
   }
 

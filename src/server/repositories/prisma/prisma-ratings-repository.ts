@@ -63,14 +63,18 @@ export class PrismaRatingsRepository implements RatingsRepository {
         user_id: userId,
         book: query
           ? {
-              name: {
-                contains: query,
-              },
-              OR: {
-                author: {
-                  contains: query,
+              OR: [
+                {
+                  name: {
+                    contains: query,
+                  },
                 },
-              },
+                {
+                  author: {
+                    contains: query,
+                  },
+                },
+              ],
             }
           : undefined,
       },

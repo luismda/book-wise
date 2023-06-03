@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { BookOpen, BookmarkSimple, Books, User, UserList } from 'phosphor-react'
+import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
 import { getServerSession } from '@/server/lib/auth/session'
@@ -7,8 +9,13 @@ import { getUserProfileService } from '@/server/http/services/get-user-profile'
 import { getUserMetricsService } from '@/server/http/services/get-user-metrics'
 import { fetchRatingsOfUserService } from '@/server/http/services/fetch-ratings-of-user'
 
+import { api } from '@/lib/axios'
+
 import { DefaultLayout } from '@/layouts/DefaultLayout'
-import { RatingsSearchForm } from '@/components/RatingsSearchForm'
+import {
+  RatingsSearchForm,
+  RatingsSearchFormData,
+} from '@/components/RatingsSearchForm'
 import { Heading } from '@/components/Heading'
 import { Avatar } from '@/components/Avatar'
 import { Metric } from '@/components/Metric'
@@ -17,6 +24,7 @@ import { BookCover } from '@/components/BookCover'
 import { RatingStarsView } from '@/components/RatingStarsView'
 
 interface UserProfile {
+  id: string
   name: string
   avatar_url: string
   created_at: string
@@ -47,14 +55,43 @@ interface RatingOfUser {
 interface ProfileProps {
   user: UserProfile
   userMetrics: UserMetrics
-  ratingsOfUser: RatingOfUser[]
+  initialRatingsOfUser: RatingOfUser[]
 }
 
 export default function Profile({
   user,
   userMetrics,
-  ratingsOfUser,
+  initialRatingsOfUser,
 }: ProfileProps) {
+  const [search, setSearch] = useState('')
+
+  const { data: filteredRatingsOfUser } = useQuery(
+    ['ratings', user.id, search],
+    async () => {
+      const response = await api.get<{ ratings: RatingOfUser[] }>(
+        `/ratings/users/${user.id}`,
+        {
+          params: {
+            query: search,
+          },
+        },
+      )
+
+      const { ratings } = response.data
+
+      return ratings
+    },
+    {
+      enabled: !!search,
+    },
+  )
+
+  function handleSubmitRatingsSearchForm({ search }: RatingsSearchFormData) {
+    setSearch(search)
+  }
+
+  const ratingsOfUser = filteredRatingsOfUser ?? initialRatingsOfUser
+
   return (
     <div>
       <header>
@@ -69,7 +106,7 @@ export default function Profile({
 
       <div className="mt-10 grid grid-cols-[1fr_19.15rem] items-start gap-16">
         <div>
-          <RatingsSearchForm onSubmit={() => {}} />
+          <RatingsSearchForm onSubmit={handleSubmitRatingsSearchForm} />
 
           <main className="mt-8 flex flex-col gap-6">
             {ratingsOfUser.map((rating) => {
@@ -205,7 +242,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const user = await getUserProfileService({ userId })
   const userMetrics = await getUserMetricsService({ userId })
 
-  const ratingsOfUser = await fetchRatingsOfUserService({
+  const initialRatingsOfUser = await fetchRatingsOfUserService({
     page: 1,
     perPage: 6,
     userId,
@@ -215,7 +252,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     props: {
       user,
       userMetrics,
-      ratingsOfUser,
+      initialRatingsOfUser,
     },
   }
 }
