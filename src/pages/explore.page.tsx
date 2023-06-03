@@ -126,6 +126,7 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
           return (
             <BookCard
               key={book.id}
+              id={book.id}
               name={book.name}
               author={book.author}
               ratingStarsAmount={book.average_grade}

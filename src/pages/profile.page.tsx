@@ -22,6 +22,7 @@ import { Metric } from '@/components/Metric'
 import { Rating } from '@/components/Rating'
 import { BookCover } from '@/components/BookCover'
 import { RatingStarsView } from '@/components/RatingStarsView'
+import { BookSideModal } from '@/components/BookSideModal'
 
 interface UserProfile {
   id: string
@@ -119,11 +120,19 @@ export default function Profile({
                   <Rating.Box>
                     <Rating.BookContainer>
                       <Rating.BookCover>
-                        <BookCover
-                          bookCoverUrl={rating.book.cover_url}
-                          altText=""
-                          size="sm"
-                        />
+                        <BookSideModal.Trigger bookId={rating.book.id}>
+                          <button
+                            type="button"
+                            aria-label={`Ver mais detalhes do livro ${rating.book.name}`}
+                            className="min-w-max rounded-xs outline-none transition-all focus:ring focus:ring-gray-500"
+                          >
+                            <BookCover
+                              bookCoverUrl={rating.book.cover_url}
+                              altText=""
+                              size="sm"
+                            />
+                          </button>
+                        </BookSideModal.Trigger>
                       </Rating.BookCover>
 
                       <Rating.BookInfoContainer>

@@ -80,7 +80,9 @@ interface RatingBookNameProps {
 }
 
 function RatingBookName({ children }: RatingBookNameProps) {
-  return <strong className="block text-lg leading-short">{children}</strong>
+  return (
+    <strong className="line-clamp-3 text-lg leading-short">{children}</strong>
+  )
 }
 
 RatingBookName.displayName = 'Rating.BookName'

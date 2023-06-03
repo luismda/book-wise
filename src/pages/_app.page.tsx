@@ -12,6 +12,7 @@ import { queryClient } from '@/lib/react-query'
 const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
+  variable: '--font-nunito-sans',
 })
 
 interface CustomAppProps extends Omit<AppProps, 'Component'> {
@@ -27,14 +28,22 @@ export default function App({
   const Layout = Component.layout ?? Fragment
 
   return (
-    <SessionProvider session={session}>
-      <QueryClientProvider client={queryClient}>
-        <div className={nunitoSans.className}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </div>
-      </QueryClientProvider>
-    </SessionProvider>
+    <>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `:root { --font-nunito-sans: ${nunitoSans.style.fontFamily}; }`,
+        }}
+      />
+
+      <SessionProvider session={session}>
+        <QueryClientProvider client={queryClient}>
+          <div className={nunitoSans.className}>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </div>
+        </QueryClientProvider>
+      </SessionProvider>
+    </>
   )
 }

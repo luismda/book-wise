@@ -27,7 +27,9 @@ export class PrismaBooksRepository implements BooksRepository {
   }
 
   async findByIdWithRelationships(id: string) {
-    const book = await prisma.$queryRaw<FindByIdWithRelationshipsQueryResult>`
+    const [book] = await prisma.$queryRaw<
+      FindByIdWithRelationshipsQueryResult[]
+    >`
       SELECT 
 	      B.*, 
 	      IFNULL((SUM(R.rate)/COUNT(R.id)), 0) average_grade, 
@@ -39,6 +41,8 @@ export class PrismaBooksRepository implements BooksRepository {
         INNER JOIN 
           categories C 
             ON C.id = CB.category_id 
+        WHERE
+          CB.book_id = B.id
         GROUP BY 
           CB.book_id) categories
       FROM
@@ -52,12 +56,13 @@ export class PrismaBooksRepository implements BooksRepository {
         B.id
     `
 
-    const bookWithSplitCategories = {
+    const bookWithSplitCategoriesAndWithoutBigInt = {
       ...book,
       categories: book.categories.split(','),
+      ratings_amount: Number(book.ratings_amount),
     }
 
-    return bookWithSplitCategories
+    return bookWithSplitCategoriesAndWithoutBigInt
   }
 
   async findMany({ page, perPage, categoriesId, query }: BookFindManyParams) {

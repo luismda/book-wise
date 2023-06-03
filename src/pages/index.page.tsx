@@ -79,6 +79,7 @@ export default function Home({
 
               <SummaryRating
                 book={{
+                  id: userLastRating.book.id,
                   name: userLastRating.book.name,
                   author: userLastRating.book.author,
                   cover: {
@@ -104,6 +105,7 @@ export default function Home({
                   <UserSummaryRating
                     key={rating.id}
                     book={{
+                      id: rating.book.id,
                       name: rating.book.name,
                       author: rating.book.author,
                       cover: {
@@ -141,6 +143,7 @@ export default function Home({
               return (
                 <BookCard
                   key={book.id}
+                  id={book.id}
                   name={book.name}
                   author={book.author}
                   ratingStarsAmount={book.average_grade}
