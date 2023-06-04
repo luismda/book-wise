@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { getServerSession } from '@/server/lib/auth/session'
 import { fetchRatingsOfUserService } from '@/server/http/services/fetch-ratings-of-user'
+import { ResourceNotFoundError } from '@/server/use-cases/errors/resource-not-found-error'
 
 export default async function handler(
   req: NextApiRequest,
@@ -36,14 +37,26 @@ export default async function handler(
 
   const { id, page, per_page, query } = paramsValidation.data
 
-  const ratings = await fetchRatingsOfUserService({
-    userId: id,
-    page,
-    perPage: per_page,
-    query,
-  })
+  try {
+    const ratings = await fetchRatingsOfUserService({
+      userId: id,
+      page,
+      perPage: per_page,
+      query,
+    })
 
-  res.json({
-    ratings,
-  })
+    res.json({
+      ratings,
+    })
+  } catch (error) {
+    if (error instanceof ResourceNotFoundError) {
+      return res.status(404).send({
+        message: error.message,
+      })
+    }
+
+    return res.status(500).send({
+      message: 'Internal server error.',
+    })
+  }
 }
