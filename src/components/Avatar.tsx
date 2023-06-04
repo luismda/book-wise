@@ -1,10 +1,11 @@
 import { ForwardedRef, forwardRef } from 'react'
 import Image from 'next/image'
 import { clsx } from 'clsx'
+import { User } from 'phosphor-react'
 
 interface AvatarProps {
   size?: 'sm' | 'md' | 'lg'
-  avatarUrl: string
+  avatarUrl?: string
 }
 
 export const Avatar = forwardRef(
@@ -12,6 +13,14 @@ export const Avatar = forwardRef(
     { size = 'md', avatarUrl }: AvatarProps,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
+    if (!avatarUrl) {
+      return (
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-600">
+          <User className="h-5 w-5 text-gray-400" />
+        </div>
+      )
+    }
+
     return (
       <div
         ref={ref}

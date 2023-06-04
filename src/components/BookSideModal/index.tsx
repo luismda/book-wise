@@ -1,32 +1,57 @@
-import { ForwardedRef, ReactNode, forwardRef } from 'react'
+import { ForwardedRef, ReactNode, forwardRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'phosphor-react'
+import { clsx } from 'clsx'
 
 import { BookDetails } from './BookDetails'
 import { RatingsList } from './RatingsList'
+import { CreateRatingForm } from './CreateRatingForm'
 
 interface BookSideModalContentProps {
   bookId: string
 }
 
 function BookSideModalContent({ bookId }: BookSideModalContentProps) {
+  const [isShouldBeFormVisible, setIsShouldBeFormVisible] = useState(false)
+
+  function handleHideForm() {
+    setIsShouldBeFormVisible(false)
+  }
+
+  function handleShowForm() {
+    setIsShouldBeFormVisible(true)
+  }
+
   return (
     <Dialog.Portal>
       <Dialog.Overlay className="fixed top-0 h-screen w-screen bg-black/60" />
 
-      <Dialog.Content className="fixed bottom-0 right-0 top-0 w-full max-w-[660px] overflow-y-auto bg-gray-800 px-13 py-16 font-sans shadow-xl shadow-black/50">
+      <Dialog.Content className="fixed bottom-0 right-0 top-0 w-full max-w-[660px] overflow-y-auto bg-gray-800 px-13 py-16 font-sans shadow-xl shadow-black/50 outline-none focus:ring focus:ring-gray-700">
         <BookDetails bookId={bookId} />
 
-        <div className="mt-10 flex items-center justify-between">
+        <div className="mb-4 mt-10 flex items-center justify-between">
           <span className="text-sm leading-base text-gray-200">Avaliações</span>
 
           <button
             type="button"
-            className="font-bold leading-base text-purple-100 outline-none focus:underline"
+            aria-hidden={isShouldBeFormVisible}
+            className={clsx(
+              'font-bold leading-base text-purple-100 outline-none focus:underline',
+              {
+                hidden: isShouldBeFormVisible,
+              },
+            )}
+            onClick={handleShowForm}
           >
             Avaliar
           </button>
         </div>
+
+        <CreateRatingForm
+          bookId={bookId}
+          isShouldBeHidden={!isShouldBeFormVisible}
+          onHide={handleHideForm}
+        />
 
         <RatingsList bookId={bookId} />
 

@@ -38,7 +38,7 @@ export function RatingsList({ bookId }: RatingsListProps) {
   }
 
   return (
-    <div className="mt-4 space-y-3">
+    <div className="space-y-3">
       {ratings.map((rating) => {
         return (
           <RatingComment.Root key={rating.id}>
