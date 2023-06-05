@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/react'
 import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
@@ -13,6 +14,7 @@ interface Rating {
   description: string
   created_at: string
   user: {
+    id: string
     name: string
     avatar_url: string
   }
@@ -23,6 +25,8 @@ interface RatingsListProps {
 }
 
 export function RatingsList({ bookId }: RatingsListProps) {
+  const session = useSession()
+
   const { data: ratings } = useQuery(['ratings', bookId], async () => {
     const response = await api.get<{ ratings: Rating[] }>(
       `/ratings/books/${bookId}`,
@@ -37,11 +41,20 @@ export function RatingsList({ bookId }: RatingsListProps) {
     return null
   }
 
+  const userAuthenticated = session.data?.user
+
   return (
     <div className="space-y-3">
       {ratings.map((rating) => {
         return (
-          <RatingComment.Root key={rating.id}>
+          <RatingComment.Root
+            key={rating.id}
+            variant={
+              userAuthenticated?.id === rating.user.id
+                ? 'highlighted'
+                : 'default'
+            }
+          >
             <RatingComment.Header>
               <RatingComment.UserContainer>
                 <RatingComment.UserAvatar>

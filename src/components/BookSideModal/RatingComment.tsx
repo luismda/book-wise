@@ -1,13 +1,23 @@
 import { ReactNode } from 'react'
 import { Slot } from '@radix-ui/react-slot'
+import { clsx } from 'clsx'
 
 interface RatingCommentRootProps {
   children: ReactNode
+  variant?: 'default' | 'highlighted'
 }
 
-function RatingCommentRoot({ children }: RatingCommentRootProps) {
+function RatingCommentRoot({
+  children,
+  variant = 'default',
+}: RatingCommentRootProps) {
   return (
-    <article className="flex flex-col gap-5 rounded-sm bg-gray-700 p-6">
+    <article
+      className={clsx('flex flex-col gap-5 rounded-sm p-6', {
+        'bg-gray-700': variant === 'default',
+        'bg-gray-600': variant === 'highlighted',
+      })}
+    >
       {children}
     </article>
   )

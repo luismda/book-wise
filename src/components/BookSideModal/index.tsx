@@ -1,11 +1,11 @@
 import { ForwardedRef, ReactNode, forwardRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'phosphor-react'
-import { clsx } from 'clsx'
 
 import { BookDetails } from './BookDetails'
 import { RatingsList } from './RatingsList'
 import { CreateRatingForm } from './CreateRatingForm'
+import { RateButton } from './RateButton'
 
 interface BookSideModalContentProps {
   bookId: string
@@ -27,24 +27,26 @@ function BookSideModalContent({ bookId }: BookSideModalContentProps) {
       <Dialog.Overlay className="fixed top-0 h-screen w-screen bg-black/60" />
 
       <Dialog.Content className="fixed bottom-0 right-0 top-0 w-full max-w-[660px] overflow-y-auto bg-gray-800 px-13 py-16 font-sans shadow-xl shadow-black/50 outline-none">
+        <Dialog.Close
+          aria-label="Fechar modal de detalhes do livro"
+          className="absolute right-13 top-6 leading-[0] text-gray-400 outline-none transition-colors hover:text-gray-300 focus:text-gray-300"
+        >
+          <X className="h-6 w-6" />
+        </Dialog.Close>
+
         <BookDetails bookId={bookId} />
 
         <div className="mb-4 mt-10 flex items-center justify-between">
           <span className="text-sm leading-base text-gray-200">Avaliações</span>
 
-          <button
+          <RateButton
             type="button"
-            aria-hidden={isShouldBeFormVisible}
-            className={clsx(
-              'font-bold leading-base text-purple-100 outline-none focus:underline',
-              {
-                hidden: isShouldBeFormVisible,
-              },
-            )}
+            bookId={bookId}
+            isShouldBeHidden={isShouldBeFormVisible}
             onClick={handleShowForm}
           >
             Avaliar
-          </button>
+          </RateButton>
         </div>
 
         <CreateRatingForm
@@ -54,13 +56,6 @@ function BookSideModalContent({ bookId }: BookSideModalContentProps) {
         />
 
         <RatingsList bookId={bookId} />
-
-        <Dialog.Close
-          aria-label="Fechar modal de detalhes do livro"
-          className="absolute right-13 top-6 leading-[0] text-gray-400 outline-none transition-colors hover:text-gray-300 focus:text-gray-300"
-        >
-          <X className="h-6 w-6" />
-        </Dialog.Close>
       </Dialog.Content>
     </Dialog.Portal>
   )

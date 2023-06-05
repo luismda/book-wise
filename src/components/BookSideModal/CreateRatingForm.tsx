@@ -1,4 +1,5 @@
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { Check, X } from 'phosphor-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
@@ -20,7 +21,9 @@ const createRatingFormSchema = z.object({
     .min(1, 'Você precisar dar no mínimo 1 estrela para o livro.')
     .max(5, 'Você pode dar no máximo 5 estrelas para o livro.'),
   description: z
-    .string()
+    .string({
+      required_error: 'Informe sua avaliação do livro.',
+    })
     .trim()
     .min(10, 'Sua avaliação precisa ter no mínimo 10 caracteres.')
     .max(450, 'Sua avaliação não pode ter mais que 450 caracteres.'),
@@ -64,17 +67,27 @@ export function CreateRatingForm({
       onSuccess: () => {
         queryClient.invalidateQueries(['ratings', bookId])
         queryClient.invalidateQueries(['books', bookId])
+        queryClient.invalidateQueries([
+          'ratings',
+          session.data?.user.id,
+          bookId,
+        ])
       },
     },
   )
 
   async function handleCreateRating(data: CreateRatingFormData) {
-    await createRating.mutateAsync({
-      rate: data.rate,
-      description: data.description,
-    })
+    try {
+      await createRating.mutateAsync({
+        rate: data.rate,
+        description: data.description,
+      })
 
-    reset()
+      reset()
+      onHide()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   function handleHideForm() {
@@ -82,7 +95,9 @@ export function CreateRatingForm({
     onHide()
   }
 
-  const isShouldBeDisabled = createRating.isLoading || isShouldBeHidden
+  const isUserAuthenticated = !!session.data?.user
+  const isShouldBeDisabled =
+    createRating.isLoading || isShouldBeHidden || !isUserAuthenticated
 
   return (
     <form
@@ -97,7 +112,7 @@ export function CreateRatingForm({
           <Avatar avatarUrl={session.data?.user.avatar_url} />
 
           <strong className="leading-short">
-            {session.data?.user.name ?? 'Usuário'}
+            {session.data?.user.name ?? 'Leitor'}
           </strong>
         </div>
 
@@ -107,7 +122,9 @@ export function CreateRatingForm({
           render={({ field: { value, onChange } }) => {
             return (
               <RatingsStarsRadioGroup
-                id="rate"
+                aria-required
+                aria-invalid={!!errors.rate}
+                aria-disabled={isShouldBeDisabled}
                 disabled={isShouldBeDisabled}
                 value={String(value)}
                 onValueChange={onChange}
@@ -119,28 +136,45 @@ export function CreateRatingForm({
 
       <div className="flex flex-col gap-3">
         <div>
-          <label>
-            <textarea
-              placeholder="Escreva sua avaliação"
-              aria-label="Digite algum comentário sobre o que você achou do livro"
-              disabled={isShouldBeDisabled}
-              className="min-h-[10.25rem] w-full rounded-xs border border-gray-500 bg-gray-800 px-5 py-3 text-sm leading-base text-gray-200 outline-none transition-colors placeholder:text-gray-400 focus:border-green-200 disabled:cursor-not-allowed disabled:opacity-70"
-              {...register('description')}
-            />
+          <textarea
+            aria-required
+            aria-label="Digite algum comentário sobre o que você achou do livro"
+            aria-invalid={!!errors.description}
+            aria-disabled={isShouldBeDisabled}
+            disabled={isShouldBeDisabled}
+            placeholder="Escreva sua avaliação"
+            className="min-h-[10.25rem] w-full rounded-xs border border-gray-500 bg-gray-800 px-5 py-3 text-sm leading-base text-gray-200 outline-none transition-colors placeholder:text-gray-400 focus:border-green-200 disabled:cursor-not-allowed disabled:opacity-70"
+            {...register('description')}
+          />
 
-            {errors.description && (
-              <p className="text-sm leading-base text-red-400">
-                {errors.description.message}
-              </p>
-            )}
-          </label>
+          {!!errors.description && (
+            <p role="alert" className="text-sm leading-base text-red-400">
+              {errors.description.message}
+            </p>
+          )}
 
-          {errors.rate && (
-            <label htmlFor="rate">
-              <p className="text-sm leading-base text-red-400">
-                {errors.rate.message}
-              </p>
-            </label>
+          {!!errors.rate && (
+            <p role="alert" className="text-sm leading-base text-red-400">
+              {errors.rate.message}
+            </p>
+          )}
+
+          {!isUserAuthenticated && (
+            <p role="alert" className="text-sm leading-base text-gray-400">
+              <Link
+                href="/sign-in"
+                className="underline outline-none transition-colors hover:text-gray-300 focus:text-gray-300"
+              >
+                Faça login
+              </Link>{' '}
+              para deixar sua avaliação.
+            </p>
+          )}
+
+          {!!createRating.error && (
+            <p role="alert" className="text-sm leading-base text-red-400">
+              Não foi possível salvar sua avaliação, tente novamente.
+            </p>
           )}
         </div>
 
@@ -148,6 +182,7 @@ export function CreateRatingForm({
           <button
             type="button"
             aria-label="Descartar minha avaliação desse livro"
+            aria-disabled={isShouldBeDisabled}
             disabled={isShouldBeDisabled}
             className="rounded-xs bg-gray-600 p-2 leading-[0] outline-none transition-colors hover:bg-gray-500 focus:ring focus:ring-gray-500 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-gray-600"
             onClick={handleHideForm}
@@ -157,6 +192,7 @@ export function CreateRatingForm({
           <button
             type="submit"
             aria-label="Enviar minha avaliação sobre esse livro"
+            aria-disabled={isShouldBeDisabled}
             disabled={isShouldBeDisabled}
             className="rounded-xs bg-gray-600 p-2 leading-[0] outline-none transition-colors hover:bg-gray-500 focus:ring focus:ring-gray-500 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-gray-600"
           >

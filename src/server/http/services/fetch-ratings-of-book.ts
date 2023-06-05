@@ -23,7 +23,7 @@ export async function fetchRatingsOfBookService({
   const transformedRatings = ratings.map((rating) => {
     return {
       ...excludeFields(rating, ['book_id']),
-      user: excludeFields(rating.user, ['id', 'email', 'created_at']),
+      user: excludeFields(rating.user, ['email', 'created_at']),
     }
   })
 
