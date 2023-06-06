@@ -2,6 +2,8 @@ import { ButtonHTMLAttributes } from 'react'
 import { useSession } from 'next-auth/react'
 import { useQuery } from '@tanstack/react-query'
 import { clsx } from 'clsx'
+import Skeleton from 'react-loading-skeleton'
+import colors from 'tailwindcss/colors'
 
 import { api } from '@/lib/axios'
 
@@ -25,7 +27,7 @@ export function RateButton({
   const session = useSession()
   const userId = session.data?.user.id
 
-  const { data: ratingOfUserAndBook } = useQuery(
+  const { data: ratingOfUserAndBook, isLoading } = useQuery(
     ['ratings', userId, bookId],
     async () => {
       const response = await api.get<{ rating: Rating | null }>(
@@ -42,6 +44,16 @@ export function RateButton({
   )
 
   const isUserAlreadyRatedBook = !!ratingOfUserAndBook
+
+  if (isLoading) {
+    return (
+      <Skeleton
+        width="3.25rem"
+        baseColor={colors.gray[800]}
+        highlightColor={colors.gray[700]}
+      />
+    )
+  }
 
   return (
     <button

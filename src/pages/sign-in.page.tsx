@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
@@ -9,14 +10,24 @@ import bookWiseLogoImg from '../assets/book-wise-logo.svg'
 import googleIconImg from '../assets/google-icon.svg'
 import githubIconImg from '../assets/github-icon.svg'
 import rocketIconImg from '../assets/rocket-icon.svg'
+
 import { SignInProviderButton } from '@/components/SignInProviderButton'
 
 export default function SignIn() {
+  const [isLoadingOnSignInWithGoogle, setIsLoadingOnSignInWithGoogle] =
+    useState(false)
+  const [isLoadingOnSignInWithGitHub, setIsLoadingOnSignInWithGitHub] =
+    useState(false)
+
   async function handleSignInWithGoogle() {
+    setIsLoadingOnSignInWithGoogle(true)
+
     await signIn('google')
   }
 
   async function handleSignInWithGitHub() {
+    setIsLoadingOnSignInWithGitHub(true)
+
     await signIn('github')
   }
 
@@ -40,14 +51,20 @@ export default function SignIn() {
           </p>
 
           <div className="mt-10 flex flex-col gap-4">
-            <SignInProviderButton.Root onClick={handleSignInWithGoogle}>
+            <SignInProviderButton.Root
+              isLoading={isLoadingOnSignInWithGoogle}
+              onClick={handleSignInWithGoogle}
+            >
               <SignInProviderButton.Icon>
                 <Image src={googleIconImg} alt="" />
               </SignInProviderButton.Icon>
               Entrar com Google
             </SignInProviderButton.Root>
 
-            <SignInProviderButton.Root onClick={handleSignInWithGitHub}>
+            <SignInProviderButton.Root
+              isLoading={isLoadingOnSignInWithGitHub}
+              onClick={handleSignInWithGitHub}
+            >
               <SignInProviderButton.Icon>
                 <Image src={githubIconImg} alt="" />
               </SignInProviderButton.Icon>

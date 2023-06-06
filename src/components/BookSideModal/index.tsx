@@ -1,3 +1,5 @@
+import 'react-loading-skeleton/dist/skeleton.css'
+
 import { ForwardedRef, ReactNode, forwardRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'phosphor-react'

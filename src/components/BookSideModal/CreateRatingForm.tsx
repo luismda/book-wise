@@ -184,7 +184,7 @@ export function CreateRatingForm({
             aria-label="Descartar minha avaliação desse livro"
             aria-disabled={isShouldBeDisabled}
             disabled={isShouldBeDisabled}
-            className="rounded-xs bg-gray-600 p-2 leading-[0] outline-none transition-colors hover:bg-gray-500 focus:ring focus:ring-gray-500 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-gray-600"
+            className="rounded-xs bg-gray-600 p-2 leading-[0] outline-none transition-colors hover:bg-gray-500 focus:ring focus:ring-gray-500 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-gray-600"
             onClick={handleHideForm}
           >
             <X className="h-6 w-6 text-purple-100" />
@@ -192,10 +192,15 @@ export function CreateRatingForm({
           <button
             type="submit"
             aria-label="Enviar minha avaliação sobre esse livro"
+            aria-live={createRating.isLoading ? 'polite' : 'off'}
+            aria-busy={createRating.isLoading}
             aria-disabled={isShouldBeDisabled}
             disabled={isShouldBeDisabled}
-            className="rounded-xs bg-gray-600 p-2 leading-[0] outline-none transition-colors hover:bg-gray-500 focus:ring focus:ring-gray-500 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-gray-600"
+            className="relative rounded-xs bg-gray-600 p-2 leading-[0] outline-none transition-colors hover:bg-gray-500 focus:ring focus:ring-gray-500 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-gray-600"
           >
+            {createRating.isLoading && (
+              <span className="absolute left-2 right-2 h-6 w-6 animate-ping rounded-full bg-green-200" />
+            )}
             <Check className="h-6 w-6 text-green-100" />
           </button>
         </div>
