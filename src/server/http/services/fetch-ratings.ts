@@ -7,14 +7,36 @@ interface FetchRatingsServiceParams {
   excludedUserId?: string
 }
 
+interface Rating {
+  id: string
+  rate: number
+  description: string
+  created_at: string
+  user: {
+    name: string
+    avatar_url: string | null
+  }
+  book: {
+    id: string
+    name: string
+    author: string
+    cover_url: string
+  }
+}
+
+interface FetcRatingsServiceResponse {
+  ratings: Rating[]
+  totalRatings: number
+}
+
 export async function fetchRatingsService({
   page,
   perPage,
   excludedUserId,
-}: FetchRatingsServiceParams) {
+}: FetchRatingsServiceParams): Promise<FetcRatingsServiceResponse> {
   const fetchRatingsUseCase = makeFetchRatingsUseCase()
 
-  const { ratings } = await fetchRatingsUseCase.execute({
+  const { ratings, totalRatings } = await fetchRatingsUseCase.execute({
     page,
     perPage,
     excludedUserId,
@@ -33,5 +55,8 @@ export async function fetchRatingsService({
     }
   })
 
-  return transformedRatings
+  return {
+    ratings: transformedRatings,
+    totalRatings,
+  }
 }

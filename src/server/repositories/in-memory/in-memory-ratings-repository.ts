@@ -10,6 +10,8 @@ import {
   RatingFindManyByUserIdParams,
   RatingWithBook,
   RatingsMetricsOfUser,
+  RatingCountParams,
+  RatingCountByUserIdParams,
 } from '../ratings-repository'
 import { UsersRepository } from '../users-repository'
 import { BooksRepository } from '../books-repository'
@@ -177,6 +179,56 @@ export class InMemoryRatingsRepository implements RatingsRepository {
     )
 
     return ratingsWithUserAndBook
+  }
+
+  async count({ excludedUserId }: RatingCountParams) {
+    const totalRatings = this.ratings.filter(
+      (rating) => rating.user_id !== excludedUserId,
+    ).length
+
+    return totalRatings
+  }
+
+  async countByUserId({ userId, query }: RatingCountByUserIdParams) {
+    const ratingsOfUser = this.ratings.filter(
+      (rating) => rating.user_id === userId,
+    )
+
+    const books = (await this.booksRepository?.list()) ?? []
+
+    const totalRatingsOfUser = ratingsOfUser
+      .map((rating) => {
+        const book = books.find((book) => book.id === rating.book_id)!
+
+        return {
+          id: rating.id,
+          user_id: rating.user_id,
+          rate: rating.rate,
+          description: rating.description,
+          created_at: rating.created_at,
+          book,
+        }
+      })
+      .filter((rating) => {
+        if (query) {
+          return (
+            rating.book.name.includes(query) ||
+            rating.book.author.includes(query)
+          )
+        }
+
+        return true
+      }).length
+
+    return totalRatingsOfUser
+  }
+
+  async countByBookId(bookId: string) {
+    const totalRatingsOfBook = this.ratings.filter(
+      (rating) => rating.book_id === bookId,
+    ).length
+
+    return totalRatingsOfBook
   }
 
   async countMetricsByUserId(userId: string): Promise<RatingsMetricsOfUser> {

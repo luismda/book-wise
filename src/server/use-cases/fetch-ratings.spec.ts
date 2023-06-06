@@ -66,11 +66,12 @@ describe('Fetch Ratings Use Case', () => {
       description: 'Very interesting...',
     })
 
-    const { ratings } = await sut.execute({
+    const { ratings, totalRatings } = await sut.execute({
       perPage: 6,
       page: 1,
     })
 
+    expect(totalRatings).toEqual(2)
     expect(ratings).toEqual([
       expect.objectContaining({
         id: expect.any(String),
@@ -126,12 +127,13 @@ describe('Fetch Ratings Use Case', () => {
       description: 'Very interesting...',
     })
 
-    const { ratings } = await sut.execute({
+    const { ratings, totalRatings } = await sut.execute({
       excludedUserId: firstUser.id,
       perPage: 6,
       page: 1,
     })
 
+    expect(totalRatings).toEqual(1)
     expect(ratings).toEqual([
       expect.objectContaining({
         id: expect.any(String),
@@ -174,11 +176,12 @@ describe('Fetch Ratings Use Case', () => {
       vi.advanceTimersByTime(tenMinutesInMs)
     }
 
-    const { ratings } = await sut.execute({
+    const { ratings, totalRatings } = await sut.execute({
       perPage: 6,
       page: 2,
     })
 
+    expect(totalRatings).toEqual(8)
     expect(ratings).toHaveLength(2)
     expect(ratings).toEqual([
       expect.objectContaining({

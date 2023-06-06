@@ -8,15 +8,33 @@ interface FetchRatingsOfUserServiceParams {
   query?: string
 }
 
+interface Rating {
+  id: string
+  rate: number
+  description: string
+  created_at: string
+  book: {
+    id: string
+    name: string
+    author: string
+    cover_url: string
+  }
+}
+
+interface FetchRatingsOfUserServiceResponse {
+  ratings: Rating[]
+  totalRatings: number
+}
+
 export async function fetchRatingsOfUserService({
   page,
   perPage,
   userId,
   query,
-}: FetchRatingsOfUserServiceParams) {
+}: FetchRatingsOfUserServiceParams): Promise<FetchRatingsOfUserServiceResponse> {
   const fetchRatingsOfUserUseCase = makeFetchRatingsOfUserUseCase()
 
-  const { ratings } = await fetchRatingsOfUserUseCase.execute({
+  const { ratings, totalRatings } = await fetchRatingsOfUserUseCase.execute({
     page,
     perPage,
     userId,
@@ -35,5 +53,8 @@ export async function fetchRatingsOfUserService({
     }
   })
 
-  return transformedRatings
+  return {
+    ratings: transformedRatings,
+    totalRatings,
+  }
 }

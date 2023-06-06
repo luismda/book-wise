@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 import {
   Book,
+  BookCountParams,
   BookCreateInput,
   BookFindManyParams,
   BookWithAverageGrade,
@@ -113,6 +114,38 @@ export class PrismaBooksRepository implements BooksRepository {
     `
 
     return books
+  }
+
+  async count({ categoriesId, query }: BookCountParams) {
+    const totalBooks = await prisma.book.count({
+      where: {
+        categories: categoriesId
+          ? {
+              some: {
+                category_id: {
+                  in: categoriesId,
+                },
+              },
+            }
+          : undefined,
+        OR: query
+          ? [
+              {
+                name: {
+                  contains: query,
+                },
+              },
+              {
+                author: {
+                  contains: query,
+                },
+              },
+            ]
+          : undefined,
+      },
+    })
+
+    return totalBooks
   }
 
   async create(data: BookCreateInput) {

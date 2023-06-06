@@ -95,6 +95,15 @@ export interface RatingFindManyByBookIdParams {
   page: number
 }
 
+export interface RatingCountParams {
+  excludedUserId?: string
+}
+
+export interface RatingCountByUserIdParams {
+  userId: string
+  query?: string
+}
+
 export interface RatingsRepository {
   findByUserIdAndBookId(userId: string, bookId: string): Promise<Rating | null>
 
@@ -109,6 +118,12 @@ export interface RatingsRepository {
   ): Promise<RatingWithUser[]>
 
   findMany(params: RatingFindManyParams): Promise<RatingWithUserAndBook[]>
+
+  count(params: RatingCountParams): Promise<number>
+
+  countByUserId(params: RatingCountByUserIdParams): Promise<number>
+
+  countByBookId(bookId: string): Promise<number>
 
   countMetricsByUserId(userId: string): Promise<RatingsMetricsOfUser>
 

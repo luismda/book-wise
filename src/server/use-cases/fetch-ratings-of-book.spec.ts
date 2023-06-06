@@ -52,12 +52,13 @@ describe('Fetch Ratings of Book Use Case', () => {
       description: 'Very interesting...',
     })
 
-    const { ratings } = await sut.execute({
+    const { ratings, totalRatings } = await sut.execute({
       bookId: book.id,
       perPage: 6,
       page: 1,
     })
 
+    expect(totalRatings).toEqual(2)
     expect(ratings).toEqual([
       expect.objectContaining({
         id: expect.any(String),
@@ -102,12 +103,13 @@ describe('Fetch Ratings of Book Use Case', () => {
       })
     }
 
-    const { ratings } = await sut.execute({
+    const { ratings, totalRatings } = await sut.execute({
       bookId: book.id,
       perPage: 6,
       page: 2,
     })
 
+    expect(totalRatings).toEqual(8)
     expect(ratings).toHaveLength(2)
     expect(ratings).toEqual([
       expect.objectContaining({

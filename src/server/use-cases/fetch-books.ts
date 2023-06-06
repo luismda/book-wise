@@ -12,6 +12,7 @@ interface FetchBooksUseCaseRequest {
 
 interface FetchBooksUseCaseResponse {
   books: BookWithAverageGrade[]
+  totalBooks: number
 }
 
 export class FetchBooksUseCase {
@@ -30,8 +31,14 @@ export class FetchBooksUseCase {
       query,
     })
 
+    const totalBooks = await this.booksRepository.count({
+      categoriesId,
+      query,
+    })
+
     return {
       books,
+      totalBooks,
     }
   }
 }

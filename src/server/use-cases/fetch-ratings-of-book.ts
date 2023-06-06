@@ -13,6 +13,7 @@ interface FetchRatingsOfBookUseCaseRequest {
 
 interface FetchRatingsOfBookUseCaseResponse {
   ratings: RatingWithUser[]
+  totalRatings: number
 }
 
 export class FetchRatingsOfBookUseCase {
@@ -38,8 +39,11 @@ export class FetchRatingsOfBookUseCase {
       perPage,
     })
 
+    const totalRatings = await this.ratingsRepository.countByBookId(bookId)
+
     return {
       ratings,
+      totalRatings,
     }
   }
 }

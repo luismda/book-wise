@@ -33,11 +33,17 @@ export interface BookFindManyParams {
   query?: string
 }
 
+export interface BookCountParams {
+  categoriesId?: string[]
+  query?: string
+}
+
 export interface BooksRepository {
   findById(id: string): Promise<Book | null>
   findByIdWithRelationships(id: string): Promise<BookWithRelationships | null>
   findMany(params: BookFindManyParams): Promise<BookWithAverageGrade[]>
   findManyByPopularity(limit: number): Promise<BookWithAverageGrade[]>
+  count(params: BookCountParams): Promise<number>
   create(data: BookCreateInput): Promise<Book>
   list(): Promise<Book[]>
 }

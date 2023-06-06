@@ -1,5 +1,6 @@
+import { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import colors from 'tailwindcss/colors'
@@ -27,22 +28,84 @@ interface RatingsListProps {
 }
 
 export function RatingsList({ bookId }: RatingsListProps) {
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const loaderRef = useRef(null)
+
+  const queryClient = useQueryClient()
+
   const session = useSession()
 
-  const { data: ratings, isLoading } = useQuery(
-    ['ratings', bookId],
+  const perPage = 6
+
+  const { data: paginatedRatings, isLoading } = useQuery(
+    ['ratings', bookId, currentPage],
     async () => {
-      const response = await api.get<{ ratings: Rating[] }>(
-        `/ratings/books/${bookId}`,
-      )
+      const response = await api.get<{
+        ratings: Rating[]
+        totalRatings: number
+      }>(`/ratings/books/${bookId}`, {
+        params: {
+          page: currentPage,
+          per_page: perPage,
+        },
+      })
 
-      const { ratings } = response.data
+      const { ratings, totalRatings } = response.data
 
-      return ratings
+      const ratingsInCache = queryClient.getQueryData<{
+        ratings: Rating[]
+        totalRatings: number
+      }>(['ratings', bookId, currentPage - 1])
+
+      if (ratingsInCache) {
+        return {
+          ratings: [...ratingsInCache.ratings, ...ratings],
+          totalRatings,
+        }
+      }
+
+      return {
+        ratings,
+        totalRatings,
+      }
     },
   )
 
+  const totalRatings = paginatedRatings?.totalRatings ?? 0
+  const lastPage = Math.ceil(totalRatings / perPage)
+
+  useEffect(() => {
+    const options = {
+      root: null,
+      threshold: 1.0,
+    }
+
+    const observer = new IntersectionObserver((entities) => {
+      const target = entities[0]
+
+      if (target.isIntersecting) {
+        setCurrentPage((oldPage) => {
+          if (oldPage < lastPage && totalRatings > perPage) {
+            return oldPage + 1
+          }
+
+          return oldPage
+        })
+      }
+    }, options)
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [lastPage, totalRatings])
+
   const userAuthenticated = session.data?.user
+  const ratings = paginatedRatings?.ratings ?? []
 
   if (isLoading) {
     return (
@@ -131,6 +194,12 @@ export function RatingsList({ bookId }: RatingsListProps) {
           </RatingComment.Root>
         )
       })}
+
+      <div ref={loaderRef} className="mt-4">
+        {currentPage <= lastPage && totalRatings > perPage && isLoading && (
+          <p className="text-sm leading-base">Carregando mais avaliações...</p>
+        )}
+      </div>
     </div>
   )
 }

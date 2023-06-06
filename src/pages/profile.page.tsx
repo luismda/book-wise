@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { BookOpen, BookmarkSimple, Books, User, UserList } from 'phosphor-react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
 import { getServerSession } from '@/server/lib/auth/session'
@@ -56,7 +56,10 @@ interface RatingOfUser {
 interface ProfileProps {
   user: UserProfile
   userMetrics: UserMetrics
-  initialRatingsOfUser: RatingOfUser[]
+  initialRatingsOfUser: {
+    ratings: RatingOfUser[]
+    totalRatings: number
+  }
 }
 
 export default function Profile({
@@ -65,33 +68,99 @@ export default function Profile({
   initialRatingsOfUser,
 }: ProfileProps) {
   const [search, setSearch] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const { data: filteredRatingsOfUser } = useQuery(
-    ['ratings', user.id, search],
+  const loaderRef = useRef(null)
+
+  const queryClient = useQueryClient()
+
+  const perPage = 6
+
+  const { data: filteredRatingsOfUser, isLoading } = useQuery(
+    ['ratings', user.id, search, currentPage],
     async () => {
-      const response = await api.get<{ ratings: RatingOfUser[] }>(
-        `/ratings/users/${user.id}`,
-        {
-          params: {
-            query: search,
-          },
+      const response = await api.get<{
+        ratings: RatingOfUser[]
+        totalRatings: number
+      }>(`/ratings/users/${user.id}`, {
+        params: {
+          page: currentPage,
+          per_page: perPage,
+          query: search,
         },
-      )
+      })
 
-      const { ratings } = response.data
+      const { ratings, totalRatings } = response.data
 
-      return ratings
+      if (search && currentPage === 1) {
+        return {
+          ratings,
+          totalRatings,
+        }
+      }
+
+      const ratingsInCache = queryClient.getQueryData<{
+        ratings: RatingOfUser[]
+        totalRatings: number
+      }>(['ratings', user.id, search, currentPage - 1])
+
+      if (ratingsInCache) {
+        return {
+          ratings: [...ratingsInCache.ratings, ...ratings],
+          totalRatings,
+        }
+      }
+
+      return {
+        ratings: [...initialRatingsOfUser.ratings, ...ratings],
+        totalRatings,
+      }
     },
     {
-      enabled: !!search,
+      enabled: !!search || currentPage > 1,
     },
   )
 
+  const totalRatings =
+    filteredRatingsOfUser?.totalRatings ?? initialRatingsOfUser.totalRatings
+  const lastPage = Math.ceil(totalRatings / perPage)
+
+  useEffect(() => {
+    const options = {
+      root: null,
+      threshold: 1.0,
+    }
+
+    const observer = new IntersectionObserver((entities) => {
+      const target = entities[0]
+
+      if (target.isIntersecting) {
+        setCurrentPage((oldPage) => {
+          if (oldPage < lastPage && totalRatings > perPage) {
+            return oldPage + 1
+          }
+
+          return oldPage
+        })
+      }
+    }, options)
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [lastPage, totalRatings])
+
   function handleSubmitRatingsSearchForm({ search }: RatingsSearchFormData) {
+    setCurrentPage(1)
     setSearch(search)
   }
 
-  const ratingsOfUser = filteredRatingsOfUser ?? initialRatingsOfUser
+  const ratingsOfUser =
+    filteredRatingsOfUser?.ratings ?? initialRatingsOfUser.ratings
 
   return (
     <div>
@@ -156,6 +225,16 @@ export default function Profile({
                 </Rating.Root>
               )
             })}
+
+            <div ref={loaderRef} className="mt-4">
+              {currentPage <= lastPage &&
+                totalRatings > perPage &&
+                isLoading && (
+                  <p className="text-sm leading-base">
+                    Carregando mais avaliações...
+                  </p>
+                )}
+            </div>
           </main>
         </div>
 

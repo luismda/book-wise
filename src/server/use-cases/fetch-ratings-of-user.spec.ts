@@ -59,12 +59,13 @@ describe('Fetch Ratings of User Use Case', () => {
       description: 'Very interesting...',
     })
 
-    const { ratings } = await sut.execute({
+    const { ratings, totalRatings } = await sut.execute({
       userId: user.id,
       perPage: 6,
       page: 1,
     })
 
+    expect(totalRatings).toEqual(2)
     expect(ratings).toEqual([
       expect.objectContaining({
         id: expect.any(String),
@@ -113,12 +114,13 @@ describe('Fetch Ratings of User Use Case', () => {
       })
     }
 
-    const { ratings } = await sut.execute({
+    const { ratings, totalRatings } = await sut.execute({
       userId: user.id,
       perPage: 6,
       page: 2,
     })
 
+    expect(totalRatings).toEqual(8)
     expect(ratings).toHaveLength(2)
     expect(ratings).toEqual([
       expect.objectContaining({
@@ -179,13 +181,14 @@ describe('Fetch Ratings of User Use Case', () => {
       description: 'Very interesting...',
     })
 
-    const { ratings } = await sut.execute({
+    const { ratings, totalRatings } = await sut.execute({
       userId: user.id,
       query: 'Architecture',
       perPage: 6,
       page: 1,
     })
 
+    expect(totalRatings).toEqual(1)
     expect(ratings).toEqual([
       expect.objectContaining({
         id: expect.any(String),

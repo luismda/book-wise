@@ -1,4 +1,6 @@
 import {
+  RatingCountByUserIdParams,
+  RatingCountParams,
   RatingCreateInput,
   RatingFindManyByBookIdParams,
   RatingFindManyByUserIdParams,
@@ -36,9 +38,16 @@ export class PrismaRatingsRepository implements RatingsRepository {
       where: {
         user_id: userId,
       },
-      orderBy: {
-        created_at: 'desc',
-      },
+      orderBy: [
+        {
+          created_at: 'desc',
+        },
+        {
+          book: {
+            name: 'asc',
+          },
+        },
+      ],
     })
 
     return rating
@@ -125,14 +134,69 @@ export class PrismaRatingsRepository implements RatingsRepository {
           not: excludedUserId,
         },
       },
+      orderBy: [
+        {
+          created_at: 'desc',
+        },
+        {
+          book: {
+            name: 'asc',
+          },
+        },
+      ],
       take: perPage,
       skip: (page - 1) * perPage,
-      orderBy: {
-        created_at: 'desc',
-      },
     })
 
     return ratings
+  }
+
+  async count({ excludedUserId }: RatingCountParams) {
+    const totalRatings = await prisma.rating.count({
+      where: {
+        user_id: {
+          not: excludedUserId,
+        },
+      },
+    })
+
+    return totalRatings
+  }
+
+  async countByUserId({ userId, query }: RatingCountByUserIdParams) {
+    const totalRatingsOfUser = await prisma.rating.count({
+      where: {
+        user_id: userId,
+        book: query
+          ? {
+              OR: [
+                {
+                  name: {
+                    contains: query,
+                  },
+                },
+                {
+                  author: {
+                    contains: query,
+                  },
+                },
+              ],
+            }
+          : undefined,
+      },
+    })
+
+    return totalRatingsOfUser
+  }
+
+  async countByBookId(bookId: string) {
+    const totalRatingsOfBook = await prisma.rating.count({
+      where: {
+        book_id: bookId,
+      },
+    })
+
+    return totalRatingsOfBook
   }
 
   async countMetricsByUserId(userId: string) {

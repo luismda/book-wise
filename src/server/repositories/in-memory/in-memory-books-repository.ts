@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import {
   Book,
+  BookCountParams,
   BookCreateInput,
   BookFindManyParams,
   BooksRepository,
@@ -154,6 +155,35 @@ export class InMemoryBooksRepository implements BooksRepository {
       .slice(0, limit)
 
     return books
+  }
+
+  async count({ categoriesId, query }: BookCountParams) {
+    const categoriesOnBooks =
+      (await this.categoriesOnBooksRepository?.list()) ?? []
+
+    const totalBooks = this.books
+      .filter((book) => {
+        if (categoriesId) {
+          const categoriesOfBook = categoriesOnBooks.filter(
+            (categoryOnBook) => categoryOnBook.book_id === book.id,
+          )
+
+          return categoriesOfBook.some((categoryOfBook) =>
+            categoriesId.includes(categoryOfBook.category_id),
+          )
+        }
+
+        return true
+      })
+      .filter((book) => {
+        if (query) {
+          return book.name.includes(query) || book.author.includes(query)
+        }
+
+        return true
+      }).length
+
+    return totalBooks
   }
 
   async create(data: BookCreateInput) {

@@ -1,10 +1,14 @@
+import { useRef, useEffect, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { CaretRight, ChartLineUp } from 'phosphor-react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { getServerSession } from '@/server/lib/auth/session'
 import { fetchRatingsService } from '@/server/http/services/fetch-ratings'
 import { fetchPopularBooksService } from '@/server/http/services/fetch-popular-books'
 import { getUserLastRatingService } from '@/server/http/services/get-user-last-rating'
+
+import { api } from '@/lib/axios'
 
 import { DefaultLayout } from '@/layouts/DefaultLayout'
 import { Link } from '@/components/Link'
@@ -41,16 +45,90 @@ interface Rating {
 interface UserLastRating extends Omit<Rating, 'user'> {}
 
 interface HomeProps {
-  ratings: Rating[]
+  initialRatings: {
+    ratings: Rating[]
+    totalRatings: number
+  }
   popularBooks: PopularBook[]
   userLastRating: UserLastRating | null
 }
 
 export default function Home({
-  ratings,
+  initialRatings,
   popularBooks,
   userLastRating,
 }: HomeProps) {
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const loaderRef = useRef(null)
+
+  const queryClient = useQueryClient()
+
+  const perPage = 6
+  const lastPage = Math.ceil(initialRatings.totalRatings / perPage)
+
+  const { data: paginatedRatings, isLoading } = useQuery(
+    ['ratings', currentPage],
+    async () => {
+      const response = await api.get<{
+        ratings: Rating[]
+        totalRatings: number
+      }>('/ratings', {
+        params: {
+          page: currentPage,
+          per_page: perPage,
+        },
+      })
+
+      const { ratings } = response.data
+
+      const ratingsInCache = queryClient.getQueryData<Rating[]>([
+        'ratings',
+        currentPage - 1,
+      ])
+
+      if (ratingsInCache) {
+        return [...ratingsInCache, ...ratings]
+      }
+
+      return [...initialRatings.ratings, ...ratings]
+    },
+    {
+      enabled: currentPage > 1,
+    },
+  )
+
+  useEffect(() => {
+    const options = {
+      root: null,
+      threshold: 1.0,
+    }
+
+    const observer = new IntersectionObserver((entities) => {
+      const target = entities[0]
+
+      if (target.isIntersecting) {
+        setCurrentPage((oldPage) => {
+          if (oldPage < lastPage && initialRatings.totalRatings > perPage) {
+            return oldPage + 1
+          }
+
+          return oldPage
+        })
+      }
+    }, options)
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [lastPage, initialRatings.totalRatings])
+
+  const ratings = paginatedRatings ?? initialRatings.ratings
+
   return (
     <div>
       <header>
@@ -123,6 +201,16 @@ export default function Home({
                   />
                 )
               })}
+
+              <div ref={loaderRef} className="mt-4">
+                {currentPage <= lastPage &&
+                  initialRatings.totalRatings > perPage &&
+                  isLoading && (
+                    <p className="text-sm leading-base">
+                      Carregando mais avaliações...
+                    </p>
+                  )}
+              </div>
             </div>
           </div>
         </main>
@@ -170,7 +258,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   })
   const popularBooksService = fetchPopularBooksService({ limit: 4 })
 
-  const [ratings, popularBooks] = await Promise.all([
+  const [initialRatings, popularBooks] = await Promise.all([
     ratingsService,
     popularBooksService,
   ])
@@ -185,7 +273,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
   return {
     props: {
-      ratings,
+      initialRatings,
       popularBooks,
       userLastRating,
     },

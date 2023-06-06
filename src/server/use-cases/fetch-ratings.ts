@@ -11,6 +11,7 @@ interface FetchRatingsUseCaseRequest {
 
 interface FetchRatingsUseCaseResponse {
   ratings: RatingWithUserAndBook[]
+  totalRatings: number
 }
 
 export class FetchRatingsUseCase {
@@ -27,8 +28,13 @@ export class FetchRatingsUseCase {
       excludedUserId,
     })
 
+    const totalRatings = await this.ratingsRepository.count({
+      excludedUserId,
+    })
+
     return {
       ratings,
+      totalRatings,
     }
   }
 }

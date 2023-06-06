@@ -14,6 +14,7 @@ interface FetchRatingsOfUserUseCaseRequest {
 
 interface FetchRatingsOfUserUseCaseResponse {
   ratings: RatingWithBook[]
+  totalRatings: number
 }
 
 export class FetchRatingsOfUserUseCase {
@@ -41,8 +42,14 @@ export class FetchRatingsOfUserUseCase {
       perPage,
     })
 
+    const totalRatings = await this.ratingsRepository.countByUserId({
+      userId,
+      query,
+    })
+
     return {
       ratings,
+      totalRatings,
     }
   }
 }

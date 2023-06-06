@@ -68,11 +68,12 @@ describe('Fetch Books Use Case', () => {
       description: 'Very interesting...',
     })
 
-    const { books } = await sut.execute({
+    const { books, totalBooks } = await sut.execute({
       page: 1,
       perPage: 12,
     })
 
+    expect(totalBooks).toEqual(2)
     expect(books).toEqual([
       expect.objectContaining({
         id: firstBook.id,
@@ -116,12 +117,13 @@ describe('Fetch Books Use Case', () => {
       category_id: 'category_id_2',
     })
 
-    const { books } = await sut.execute({
+    const { books, totalBooks } = await sut.execute({
       page: 1,
       perPage: 12,
       categoriesId: ['category_id_1'],
     })
 
+    expect(totalBooks).toEqual(1)
     expect(books).toEqual([
       expect.objectContaining({
         id: firstBook.id,
@@ -148,12 +150,13 @@ describe('Fetch Books Use Case', () => {
       total_pages: 432,
     })
 
-    const { books } = await sut.execute({
+    const { books, totalBooks } = await sut.execute({
       page: 1,
       perPage: 12,
       query: 'Clean',
     })
 
+    expect(totalBooks).toEqual(1)
     expect(books).toEqual([
       expect.objectContaining({
         id: createdBook.id,
@@ -180,12 +183,13 @@ describe('Fetch Books Use Case', () => {
       total_pages: 432,
     })
 
-    const { books } = await sut.execute({
+    const { books, totalBooks } = await sut.execute({
       page: 1,
       perPage: 12,
       query: 'Evans',
     })
 
+    expect(totalBooks).toEqual(1)
     expect(books).toEqual([
       expect.objectContaining({
         id: createdBook.id,
@@ -206,11 +210,12 @@ describe('Fetch Books Use Case', () => {
       })
     }
 
-    const { books } = await sut.execute({
+    const { books, totalBooks } = await sut.execute({
       page: 2,
       perPage: 12,
     })
 
+    expect(totalBooks).toEqual(14)
     expect(books).toHaveLength(2)
     expect(books).toEqual([
       expect.objectContaining({

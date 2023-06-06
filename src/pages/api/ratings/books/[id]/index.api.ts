@@ -30,7 +30,7 @@ export default async function handler(
   const { id, page, per_page } = paramsValidation.data
 
   try {
-    const ratings = await fetchRatingsOfBookService({
+    const { ratings, totalRatings } = await fetchRatingsOfBookService({
       bookId: id,
       page,
       perPage: per_page,
@@ -38,6 +38,7 @@ export default async function handler(
 
     res.json({
       ratings,
+      totalRatings,
     })
   } catch (error) {
     if (error instanceof ResourceNotFoundError) {
