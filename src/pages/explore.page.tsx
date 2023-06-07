@@ -47,7 +47,7 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
 
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     ['books', search, selectedCategories.join(','), currentPage],
     async () => {
       const response = await api.get<{ books: Book[]; totalBooks: number }>(
@@ -140,7 +140,11 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
         })}
       </div>
 
-      <main className="mt-13 grid grid-cols-3 gap-5">
+      <main
+        aria-live={isLoading ? 'polite' : 'off'}
+        aria-busy={isLoading}
+        className="mt-13 grid grid-cols-3 gap-5"
+      >
         {books.map((book) => {
           return (
             <BookCard

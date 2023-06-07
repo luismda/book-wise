@@ -10,6 +10,7 @@ import { api } from '@/lib/axios'
 import { Avatar } from '../Avatar'
 import { RatingStarsView } from '../RatingStarsView'
 import { RatingComment } from './RatingComment'
+import { Loader } from '../Loader'
 
 interface Rating {
   id: string
@@ -38,39 +39,40 @@ export function RatingsList({ bookId }: RatingsListProps) {
 
   const perPage = 6
 
-  const { data: paginatedRatings, isLoading } = useQuery(
-    ['ratings', bookId, currentPage],
-    async () => {
-      const response = await api.get<{
-        ratings: Rating[]
-        totalRatings: number
-      }>(`/ratings/books/${bookId}`, {
-        params: {
-          page: currentPage,
-          per_page: perPage,
-        },
-      })
+  const {
+    data: paginatedRatings,
+    isLoading,
+    isFetching,
+  } = useQuery(['ratings', bookId, currentPage], async () => {
+    const response = await api.get<{
+      ratings: Rating[]
+      totalRatings: number
+    }>(`/ratings/books/${bookId}`, {
+      params: {
+        page: currentPage,
+        per_page: perPage,
+      },
+    })
 
-      const { ratings, totalRatings } = response.data
+    const { ratings, totalRatings } = response.data
 
-      const ratingsInCache = queryClient.getQueryData<{
-        ratings: Rating[]
-        totalRatings: number
-      }>(['ratings', bookId, currentPage - 1])
+    const ratingsInCache = queryClient.getQueryData<{
+      ratings: Rating[]
+      totalRatings: number
+    }>(['ratings', bookId, currentPage - 1])
 
-      if (ratingsInCache) {
-        return {
-          ratings: [...ratingsInCache.ratings, ...ratings],
-          totalRatings,
-        }
-      }
-
+    if (ratingsInCache) {
       return {
-        ratings,
+        ratings: [...ratingsInCache.ratings, ...ratings],
         totalRatings,
       }
-    },
-  )
+    }
+
+    return {
+      ratings,
+      totalRatings,
+    }
+  })
 
   const totalRatings = paginatedRatings?.totalRatings ?? 0
   const lastPage = Math.ceil(totalRatings / perPage)
@@ -195,9 +197,9 @@ export function RatingsList({ bookId }: RatingsListProps) {
         )
       })}
 
-      <div ref={loaderRef} className="mt-4">
-        {currentPage <= lastPage && totalRatings > perPage && isLoading && (
-          <p className="text-sm leading-base">Carregando mais avaliações...</p>
+      <div ref={loaderRef} className="mt-4 flex justify-center">
+        {currentPage <= lastPage && totalRatings > perPage && isFetching && (
+          <Loader />
         )}
       </div>
     </div>

@@ -16,6 +16,7 @@ import { BookCard } from '@/components/BookCard'
 import { SummaryRating } from '@/components/SummaryRating'
 import { UserSummaryRating } from '@/components/UserSummaryRating'
 import { Heading } from '@/components/Heading'
+import { Loader } from '@/components/Loader'
 
 interface Book {
   id: string
@@ -177,7 +178,11 @@ export default function Home({
               <p className="text-sm leading-base">Avaliações mais recentes</p>
             </div>
 
-            <div className="mt-4 flex flex-col gap-3">
+            <div
+              aria-live={isLoading ? 'polite' : 'off'}
+              aria-busy={isLoading}
+              className="mt-4 flex flex-col gap-3"
+            >
               {ratings.map((rating) => {
                 return (
                   <UserSummaryRating
@@ -202,14 +207,10 @@ export default function Home({
                 )
               })}
 
-              <div ref={loaderRef} className="mt-4">
+              <div ref={loaderRef} className="mt-4 flex justify-center">
                 {currentPage <= lastPage &&
                   initialRatings.totalRatings > perPage &&
-                  isLoading && (
-                    <p className="text-sm leading-base">
-                      Carregando mais avaliações...
-                    </p>
-                  )}
+                  isLoading && <Loader />}
               </div>
             </div>
           </div>

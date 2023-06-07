@@ -110,6 +110,13 @@ module.exports = {
       lg: '20px',
       full: '99999px',
     },
+
+    extend: {
+      animation: {
+        'bounce-delay': 'bounce 1s infinite 0.2s',
+        'bounce-super-delay': 'bounce 1s infinite 0.4s',
+      },
+    },
   },
   plugins: [],
 }

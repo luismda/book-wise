@@ -23,6 +23,7 @@ import { Rating } from '@/components/Rating'
 import { BookCover } from '@/components/BookCover'
 import { RatingStarsView } from '@/components/RatingStarsView'
 import { BookSideModal } from '@/components/BookSideModal'
+import { Loader } from '@/components/Loader'
 
 interface UserProfile {
   id: string
@@ -178,7 +179,11 @@ export default function Profile({
         <div>
           <RatingsSearchForm onSubmit={handleSubmitRatingsSearchForm} />
 
-          <main className="mt-8 flex flex-col gap-6">
+          <main
+            aria-live={isLoading ? 'polite' : 'off'}
+            aria-busy={isLoading}
+            className="mt-8 flex flex-col gap-6"
+          >
             {ratingsOfUser.map((rating) => {
               return (
                 <Rating.Root key={rating.id}>
@@ -226,14 +231,10 @@ export default function Profile({
               )
             })}
 
-            <div ref={loaderRef} className="mt-4">
+            <div ref={loaderRef} className="mt-4 flex justify-center">
               {currentPage <= lastPage &&
                 totalRatings > perPage &&
-                isLoading && (
-                  <p className="text-sm leading-base">
-                    Carregando mais avaliações...
-                  </p>
-                )}
+                isLoading && <Loader />}
             </div>
           </main>
         </div>
