@@ -4,22 +4,17 @@ import { clsx } from 'clsx'
 
 interface RatingStarsViewProps {
   ratingStarsAmount: number
+  label: string
   size?: 'sm' | 'md' | 'lg'
 }
 
 export const RatingStarsView = forwardRef(
   (
-    { ratingStarsAmount, size = 'sm' }: RatingStarsViewProps,
+    { ratingStarsAmount, label, size = 'sm' }: RatingStarsViewProps,
     ref: ForwardedRef<HTMLDivElement>,
   ) => {
     return (
-      <div
-        ref={ref}
-        className="flex items-center gap-1"
-        aria-label={`Avaliação com ${ratingStarsAmount} ${
-          ratingStarsAmount === 1 ? 'estrela' : 'estrelas'
-        }`}
-      >
+      <div ref={ref} className="flex items-center gap-1" aria-label={label}>
         {Array.from({ length: 5 }).map((_, i) => {
           return (
             <Star

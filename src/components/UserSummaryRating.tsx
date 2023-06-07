@@ -35,17 +35,24 @@ export function UserSummaryRating({
 
   return (
     <article className="flex flex-col gap-8 rounded-sm bg-gray-700 p-6">
-      <header className="flex items-start justify-between">
+      <header className="flex items-start justify-between gap-2">
         <div className="flex items-start gap-4">
           <Avatar avatarUrl={user.avatarUrl} />
-          <div>
+          <div className="flex-1">
             <span className="block leading-base">{user.name}</span>
             <time className="text-sm leading-base text-gray-400">
               {distanceOfRatingDateToNow}
             </time>
           </div>
         </div>
-        <RatingStarsView ratingStarsAmount={ratingStarsAmount} />
+        <RatingStarsView
+          ratingStarsAmount={ratingStarsAmount}
+          label={`${user.name} avaliou o livro ${
+            book.name
+          } com ${ratingStarsAmount} ${
+            ratingStarsAmount === 1 ? 'estrela' : 'estrelas'
+          }`}
+        />
       </header>
       <div className="flex items-stretch gap-5">
         <BookSideModal.Trigger bookId={book.id}>

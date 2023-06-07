@@ -52,7 +52,7 @@ export function BookDetails({ bookId }: BookDetailsProps) {
         highlightColor={colors.gray[700]}
       >
         <article className="rounded-sm bg-gray-700 px-8 pb-4 pt-6">
-          <div className="flex items-stretch gap-8">
+          <div className="flex flex-wrap items-stretch justify-center gap-8">
             {isLoading ? (
               <Skeleton
                 width="10.75rem"
@@ -67,7 +67,7 @@ export function BookDetails({ bookId }: BookDetailsProps) {
               />
             )}
 
-            <div className="flex flex-1 flex-col justify-between">
+            <div className="flex flex-1 flex-col justify-between gap-4">
               <div className="flex flex-col gap-2">
                 <strong className="text-lg leading-short">
                   {isLoading ? <Skeleton /> : book?.name}
@@ -83,6 +83,11 @@ export function BookDetails({ bookId }: BookDetailsProps) {
                 ) : (
                   <RatingStarsView
                     ratingStarsAmount={book?.average_grade ?? 0}
+                    label={`O livro ${
+                      book?.name ?? ''
+                    } tem nota média de ${parseInt(
+                      String(book?.average_grade ?? 0),
+                    )} ${book?.average_grade === 1 ? 'estrela' : 'estrelas'}`}
                     size="md"
                   />
                 )}
@@ -100,7 +105,7 @@ export function BookDetails({ bookId }: BookDetailsProps) {
             </div>
           </div>
 
-          <div className="mt-10 grid grid-cols-2 items-center gap-13 border-t border-gray-600 py-6">
+          <div className="mt-10 grid grid-cols-1 items-center gap-13 border-t border-gray-600 py-6 sm:grid-cols-2">
             <div className="flex items-center gap-4">
               {isLoading ? (
                 <Skeleton width="1.5rem" height="1.5rem" />

@@ -31,7 +31,9 @@ interface RatingCommentHeaderProps {
 
 function RatingCommentHeader({ children }: RatingCommentHeaderProps) {
   return (
-    <header className="flex items-start justify-between">{children}</header>
+    <header className="flex items-start justify-between gap-2">
+      {children}
+    </header>
   )
 }
 
@@ -64,7 +66,7 @@ interface RatingCommentUserInfoContainerProps {
 function RatingCommentUserInfoContainer({
   children,
 }: RatingCommentUserInfoContainerProps) {
-  return <div>{children}</div>
+  return <div className="flex-1">{children}</div>
 }
 
 RatingCommentUserInfoContainer.displayName = 'RatingComment.UserInfoContainer'

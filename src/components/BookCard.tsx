@@ -54,7 +54,12 @@ export function BookCard({
               </span>
             </div>
 
-            <RatingStarsView ratingStarsAmount={ratingStarsAmount} />
+            <RatingStarsView
+              ratingStarsAmount={ratingStarsAmount}
+              label={`O livro ${name} tem nota média de ${parseInt(
+                String(ratingStarsAmount),
+              )} ${ratingStarsAmount === 1 ? 'estrela' : 'estrelas'}`}
+            />
           </div>
         </button>
       </BookSideModal.Trigger>

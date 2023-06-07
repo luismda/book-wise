@@ -110,7 +110,7 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
       />
 
       <div>
-        <header className="flex items-start justify-between">
+        <header className="flex flex-wrap items-start justify-between gap-4">
           <Heading.Root>
             <Heading.Icon>
               <Binoculars />
@@ -119,7 +119,7 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
             <Heading.Title>Explorar</Heading.Title>
           </Heading.Root>
 
-          <div className="w-full max-w-[420px]">
+          <div className="w-full md:max-w-[420px]">
             <BooksSearchForm onSubmit={handleSubmitBooksSearchForm} />
           </div>
         </header>
@@ -150,7 +150,7 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
         <main
           aria-live={isLoading ? 'polite' : 'off'}
           aria-busy={isLoading}
-          className="mt-13 grid grid-cols-3 gap-5"
+          className="mt-13 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
         >
           {books.map((book) => {
             return (

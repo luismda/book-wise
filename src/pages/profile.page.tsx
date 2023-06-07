@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { NextSeo } from 'next-seo'
+import Link from 'next/link'
 import { BookOpen, BookmarkSimple, Books, User, UserList } from 'phosphor-react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
@@ -179,7 +180,7 @@ export default function Profile({
           </Heading.Root>
         </header>
 
-        <div className="mt-10 grid grid-cols-[1fr_19.15rem] items-start gap-16">
+        <div className="mt-10 grid grid-cols-1 items-start gap-16 md:grid-cols-[1fr_19.15rem]">
           <div>
             <RatingsSearchForm onSubmit={handleSubmitRatingsSearchForm} />
 
@@ -188,54 +189,74 @@ export default function Profile({
               aria-busy={isLoading}
               className="mt-8 flex flex-col gap-6"
             >
-              {ratingsOfUser.map((rating) => {
-                return (
-                  <Rating.Root key={rating.id}>
-                    <Rating.Date>
-                      {dayjs(rating.created_at).fromNow()}
-                    </Rating.Date>
+              {ratingsOfUser.length < 0 ? (
+                ratingsOfUser.map((rating) => {
+                  return (
+                    <Rating.Root key={rating.id}>
+                      <Rating.Date>
+                        {dayjs(rating.created_at).fromNow()}
+                      </Rating.Date>
 
-                    <Rating.Box>
-                      <Rating.BookContainer>
-                        <Rating.BookCover>
-                          <BookSideModal.Trigger bookId={rating.book.id}>
-                            <button
-                              type="button"
-                              aria-label={`Ver mais detalhes do livro ${rating.book.name}`}
-                              className="min-w-max rounded-xs outline-none transition-all focus:ring focus:ring-gray-500"
-                            >
-                              <BookCover
-                                bookCoverUrl={rating.book.cover_url}
-                                altText=""
-                                size="sm"
+                      <Rating.Box>
+                        <Rating.BookContainer>
+                          <Rating.BookCover>
+                            <BookSideModal.Trigger bookId={rating.book.id}>
+                              <button
+                                type="button"
+                                aria-label={`Ver mais detalhes do livro ${rating.book.name}`}
+                                className="min-w-max rounded-xs outline-none transition-all focus:ring focus:ring-gray-500"
+                              >
+                                <BookCover
+                                  bookCoverUrl={rating.book.cover_url}
+                                  altText=""
+                                  size="sm"
+                                />
+                              </button>
+                            </BookSideModal.Trigger>
+                          </Rating.BookCover>
+
+                          <Rating.BookInfoContainer>
+                            <Rating.BookInfo>
+                              <Rating.BookName>
+                                {rating.book.name}
+                              </Rating.BookName>
+                              <Rating.BookAuthor>
+                                {rating.book.author}
+                              </Rating.BookAuthor>
+                            </Rating.BookInfo>
+
+                            <Rating.Stars>
+                              <RatingStarsView
+                                ratingStarsAmount={rating.rate}
+                                label={`Você avaliou o livro ${
+                                  rating.book.name
+                                } com ${rating.rate} ${
+                                  rating.rate === 1 ? 'estrela' : 'estrelas'
+                                }`}
                               />
-                            </button>
-                          </BookSideModal.Trigger>
-                        </Rating.BookCover>
+                            </Rating.Stars>
+                          </Rating.BookInfoContainer>
+                        </Rating.BookContainer>
 
-                        <Rating.BookInfoContainer>
-                          <Rating.BookInfo>
-                            <Rating.BookName>
-                              {rating.book.name}
-                            </Rating.BookName>
-                            <Rating.BookAuthor>
-                              {rating.book.author}
-                            </Rating.BookAuthor>
-                          </Rating.BookInfo>
-
-                          <Rating.Stars>
-                            <RatingStarsView ratingStarsAmount={rating.rate} />
-                          </Rating.Stars>
-                        </Rating.BookInfoContainer>
-                      </Rating.BookContainer>
-
-                      <Rating.Description>
-                        {rating.description}
-                      </Rating.Description>
-                    </Rating.Box>
-                  </Rating.Root>
-                )
-              })}
+                        <Rating.Description>
+                          {rating.description}
+                        </Rating.Description>
+                      </Rating.Box>
+                    </Rating.Root>
+                  )
+                })
+              ) : (
+                <p className="mx-auto max-w-[340px] text-center text-sm leading-base text-gray-300">
+                  Você ainda não tem nenhuma avaliação.{' '}
+                  <Link
+                    href="/explore"
+                    className="underline outline-none transition-colors hover:text-gray-100 focus:text-gray-100"
+                  >
+                    Explore
+                  </Link>{' '}
+                  os livros disponíveis e avalie algum que você já leu.
+                </p>
+              )}
 
               <div ref={loaderRef} className="mt-4 flex justify-center">
                 {currentPage <= lastPage &&
@@ -245,7 +266,7 @@ export default function Profile({
             </main>
           </div>
 
-          <aside className="border-l border-gray-700">
+          <aside className="order-first md:order-last md:border-l md:border-gray-700">
             <div className="flex flex-col items-center">
               <Avatar avatarUrl={user.avatar_url} size="lg" />
 

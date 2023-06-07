@@ -188,7 +188,16 @@ export function RatingsList({ bookId }: RatingsListProps) {
               </RatingComment.UserContainer>
 
               <RatingComment.Stars>
-                <RatingStarsView ratingStarsAmount={rating.rate} />
+                <RatingStarsView
+                  ratingStarsAmount={rating.rate}
+                  label={`${
+                    userAuthenticated?.id === rating.user.id
+                      ? 'Você'
+                      : rating.user.name
+                  } avaliou o livro com ${rating.rate} ${
+                    rating.rate === 1 ? 'estrela' : 'estrelas'
+                  }`}
+                />
               </RatingComment.Stars>
             </RatingComment.Header>
 

@@ -28,10 +28,10 @@ function BookSideModalContent({ bookId }: BookSideModalContentProps) {
     <Dialog.Portal>
       <Dialog.Overlay className="fixed top-0 h-screen w-screen bg-black/60" />
 
-      <Dialog.Content className="fixed bottom-0 right-0 top-0 w-full max-w-[660px] overflow-y-auto bg-gray-800 px-13 py-16 font-sans shadow-xl shadow-black/50 outline-none">
+      <Dialog.Content className="fixed bottom-0 right-0 top-0 w-full max-w-[660px] overflow-y-auto bg-gray-800 px-8 py-16 font-sans shadow-xl shadow-black/50 outline-none sm:px-13">
         <Dialog.Close
           aria-label="Fechar modal de detalhes do livro"
-          className="absolute right-13 top-6 leading-[0] text-gray-400 outline-none transition-colors hover:text-gray-300 focus:text-gray-300"
+          className="absolute right-8 top-6 leading-[0] text-gray-400 outline-none transition-colors hover:text-gray-300 focus:text-gray-300 sm:right-13"
         >
           <X className="h-6 w-6" />
         </Dialog.Close>

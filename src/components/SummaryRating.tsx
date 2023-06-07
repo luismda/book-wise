@@ -41,11 +41,18 @@ export function SummaryRating({
           />
           <div className="flex w-full flex-col justify-between text-left">
             <div>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <time className="text-sm leading-base text-gray-300">
                   {distanceOfRatingDateToNow}
                 </time>
-                <RatingStarsView ratingStarsAmount={ratingStarsAmount} />
+                <RatingStarsView
+                  ratingStarsAmount={ratingStarsAmount}
+                  label={`Você avaliou o livro ${
+                    book.name
+                  } com ${ratingStarsAmount} ${
+                    ratingStarsAmount === 1 ? 'estrela' : 'estrelas'
+                  }`}
+                />
               </div>
 
               <strong className="mt-3 line-clamp-2 font-bold leading-short">

@@ -149,7 +149,7 @@ export default function Home({
           </Heading.Root>
         </header>
 
-        <div className="mt-10 grid grid-cols-[1fr_20.25rem] gap-16">
+        <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_20.25rem] xl:gap-16">
           <main className="space-y-10">
             {!!userLastRating && (
               <div>
