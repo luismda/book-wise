@@ -35,7 +35,7 @@ export default async function handler(
 
   const { page, per_page, categories, query } = queryParamsValidation.data
 
-  const books = await fetchBooksService({
+  const { books, totalBooks } = await fetchBooksService({
     page,
     perPage: per_page,
     categoriesId: categories,
@@ -44,5 +44,6 @@ export default async function handler(
 
   res.json({
     books,
+    totalBooks,
   })
 }

@@ -16,7 +16,7 @@ export async function fetchBooksService({
 }: FetchBooksServiceParams) {
   const fetchBooksUseCase = makeFetchBooksUseCase()
 
-  const { books } = await fetchBooksUseCase.execute({
+  const { books, totalBooks } = await fetchBooksUseCase.execute({
     page,
     perPage,
     categoriesId,
@@ -30,5 +30,8 @@ export async function fetchBooksService({
     }
   })
 
-  return transformedBooks
+  return {
+    books: transformedBooks,
+    totalBooks,
+  }
 }

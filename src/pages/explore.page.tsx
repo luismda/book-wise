@@ -17,6 +17,7 @@ import {
   BooksSearchForm,
   BooksSearchFormData,
 } from '@/components/BooksSearchForm'
+import { Pagination } from '@/components/Pagination'
 
 interface Category {
   id: string
@@ -33,40 +34,57 @@ interface Book {
 
 interface ExploreProps {
   categories: Category[]
-  initialBooks: Book[]
+  initialBooks: {
+    books: Book[]
+    totalBooks: number
+  }
 }
+
+const perPage = 12
 
 export default function Explore({ categories, initialBooks }: ExploreProps) {
   const [search, setSearch] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const { data: filteredBooks } = useQuery(
-    ['books', search, selectedCategories.join(',')],
+  const { data } = useQuery(
+    ['books', search, selectedCategories.join(','), currentPage],
     async () => {
-      const response = await api.get<{ books: Book[] }>('/books', {
-        params: {
-          query: search,
-          categories: selectedCategories,
+      const response = await api.get<{ books: Book[]; totalBooks: number }>(
+        '/books',
+        {
+          params: {
+            page: currentPage,
+            per_page: perPage,
+            query: search,
+            categories: selectedCategories,
+          },
+          paramsSerializer(params) {
+            return qs.stringify(params, { arrayFormat: 'repeat' })
+          },
         },
-        paramsSerializer(params) {
-          return qs.stringify(params, { arrayFormat: 'repeat' })
-        },
-      })
+      )
 
-      const { books } = response.data
+      const { books, totalBooks } = response.data
 
-      return books
+      return {
+        books,
+        totalBooks,
+      }
     },
     {
-      enabled: !!search || !!selectedCategories.length,
+      enabled: !!search || !!selectedCategories.length || currentPage > 1,
     },
   )
 
   function handleSubmitBooksSearchForm({ search }: BooksSearchFormData) {
+    setCurrentPage(1)
     setSearch(search)
   }
 
   function handleToggleCheckedCategory(categoryId: string) {
+    setCurrentPage(1)
+
     setSelectedCategories((categories) => {
       if (categories.includes(categoryId)) {
         return categories.filter((category) => category !== categoryId)
@@ -77,10 +95,11 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
   }
 
   function handleClearAllSelectedCategories() {
+    setCurrentPage(1)
     setSelectedCategories([])
   }
 
-  const books = filteredBooks ?? initialBooks
+  const books = data?.books ?? initialBooks.books
 
   return (
     <div>
@@ -139,6 +158,13 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
           )
         })}
       </main>
+
+      <Pagination
+        totalCountOfRegisters={data?.totalBooks ?? initialBooks.totalBooks}
+        registersPerPage={perPage}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </div>
   )
 }
