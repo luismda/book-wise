@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { GetStaticProps } from 'next'
+import { NextSeo } from 'next-seo'
 import { Binoculars } from 'phosphor-react'
 import { useQuery } from '@tanstack/react-query'
 import qs from 'qs'
@@ -102,74 +103,81 @@ export default function Explore({ categories, initialBooks }: ExploreProps) {
   const books = data?.books ?? initialBooks.books
 
   return (
-    <div>
-      <header className="flex items-start justify-between">
-        <Heading.Root>
-          <Heading.Icon>
-            <Binoculars />
-          </Heading.Icon>
-
-          <Heading.Title>Explorar</Heading.Title>
-        </Heading.Root>
-
-        <div className="w-full max-w-[420px]">
-          <BooksSearchForm onSubmit={handleSubmitBooksSearchForm} />
-        </div>
-      </header>
-
-      <div className="mt-10 flex flex-wrap items-center gap-3">
-        <CategoryTag
-          aria-label="Livros de todas as categorias"
-          checked={selectedCategories.length === 0}
-          onCheckedChange={handleClearAllSelectedCategories}
-        >
-          Tudo
-        </CategoryTag>
-
-        {categories.map(({ id, name }) => {
-          return (
-            <CategoryTag
-              key={id}
-              aria-label={`Livros da categoria de ${name}`}
-              checked={selectedCategories.includes(id)}
-              onCheckedChange={() => handleToggleCheckedCategory(id)}
-            >
-              {name}
-            </CategoryTag>
-          )
-        })}
-      </div>
-
-      <main
-        aria-live={isLoading ? 'polite' : 'off'}
-        aria-busy={isLoading}
-        className="mt-13 grid grid-cols-3 gap-5"
-      >
-        {books.map((book) => {
-          return (
-            <BookCard
-              key={book.id}
-              id={book.id}
-              name={book.name}
-              author={book.author}
-              ratingStarsAmount={book.average_grade}
-              cover={{
-                url: book.cover_url,
-                altText: '',
-                size: 'md',
-              }}
-            />
-          )
-        })}
-      </main>
-
-      <Pagination
-        totalCountOfRegisters={data?.totalBooks ?? initialBooks.totalBooks}
-        registersPerPage={perPage}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
+    <>
+      <NextSeo
+        title="Explore e busque o seu livro favorito | BookWise"
+        description="Encontre livros buscando por nome ou autor e filtrando por categorias."
       />
-    </div>
+
+      <div>
+        <header className="flex items-start justify-between">
+          <Heading.Root>
+            <Heading.Icon>
+              <Binoculars />
+            </Heading.Icon>
+
+            <Heading.Title>Explorar</Heading.Title>
+          </Heading.Root>
+
+          <div className="w-full max-w-[420px]">
+            <BooksSearchForm onSubmit={handleSubmitBooksSearchForm} />
+          </div>
+        </header>
+
+        <div className="mt-10 flex flex-wrap items-center gap-3">
+          <CategoryTag
+            aria-label="Livros de todas as categorias"
+            checked={selectedCategories.length === 0}
+            onCheckedChange={handleClearAllSelectedCategories}
+          >
+            Tudo
+          </CategoryTag>
+
+          {categories.map(({ id, name }) => {
+            return (
+              <CategoryTag
+                key={id}
+                aria-label={`Livros da categoria de ${name}`}
+                checked={selectedCategories.includes(id)}
+                onCheckedChange={() => handleToggleCheckedCategory(id)}
+              >
+                {name}
+              </CategoryTag>
+            )
+          })}
+        </div>
+
+        <main
+          aria-live={isLoading ? 'polite' : 'off'}
+          aria-busy={isLoading}
+          className="mt-13 grid grid-cols-3 gap-5"
+        >
+          {books.map((book) => {
+            return (
+              <BookCard
+                key={book.id}
+                id={book.id}
+                name={book.name}
+                author={book.author}
+                ratingStarsAmount={book.average_grade}
+                cover={{
+                  url: book.cover_url,
+                  altText: '',
+                  size: 'md',
+                }}
+              />
+            )
+          })}
+        </main>
+
+        <Pagination
+          totalCountOfRegisters={data?.totalBooks ?? initialBooks.totalBooks}
+          registersPerPage={perPage}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
+      </div>
+    </>
   )
 }
 

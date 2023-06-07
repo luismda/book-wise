@@ -5,6 +5,7 @@ import type { AppProps } from 'next/app'
 import { ElementType, Fragment, ReactNode } from 'react'
 import { Nunito_Sans } from 'next/font/google'
 import { SessionProvider } from 'next-auth/react'
+import { DefaultSeo } from 'next-seo'
 import { QueryClientProvider } from '@tanstack/react-query'
 
 import { queryClient } from '@/lib/react-query'
@@ -37,6 +38,15 @@ export default function App({
 
       <SessionProvider session={session}>
         <QueryClientProvider client={queryClient}>
+          <DefaultSeo
+            openGraph={{
+              type: 'website',
+              locale: 'pt_BR',
+              siteName: 'BookWise',
+              url: process.env.NEXT_PUBLIC_BASE_URL,
+            }}
+          />
+
           <div className={nunitoSans.className}>
             <Layout>
               <Component {...pageProps} />

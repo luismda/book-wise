@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { GetServerSideProps } from 'next'
+import { NextSeo } from 'next-seo'
 import { CaretRight, ChartLineUp } from 'phosphor-react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -131,119 +132,126 @@ export default function Home({
   const ratings = paginatedRatings ?? initialRatings.ratings
 
   return (
-    <div>
-      <header>
-        <Heading.Root>
-          <Heading.Icon>
-            <ChartLineUp />
-          </Heading.Icon>
+    <>
+      <NextSeo
+        title="Encontre avaliações e livros populares | BookWise"
+        description="Avalie os livros que você já leu e veja as avaliações de outros leitores."
+      />
 
-          <Heading.Title>Início</Heading.Title>
-        </Heading.Root>
-      </header>
+      <div>
+        <header>
+          <Heading.Root>
+            <Heading.Icon>
+              <ChartLineUp />
+            </Heading.Icon>
 
-      <div className="mt-10 grid grid-cols-[1fr_20.25rem] gap-16">
-        <main className="space-y-10">
-          {!!userLastRating && (
+            <Heading.Title>Início</Heading.Title>
+          </Heading.Root>
+        </header>
+
+        <div className="mt-10 grid grid-cols-[1fr_20.25rem] gap-16">
+          <main className="space-y-10">
+            {!!userLastRating && (
+              <div>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm leading-base">Sua última leitura</p>
+                  <Link.Root href="/profile">
+                    Ver todas
+                    <Link.Icon>
+                      <CaretRight />
+                    </Link.Icon>
+                  </Link.Root>
+                </div>
+
+                <SummaryRating
+                  book={{
+                    id: userLastRating.book.id,
+                    name: userLastRating.book.name,
+                    author: userLastRating.book.author,
+                    cover: {
+                      url: userLastRating.book.cover_url,
+                      altText: '',
+                    },
+                  }}
+                  rating={userLastRating.description}
+                  ratingStarsAmount={userLastRating.rate}
+                  createdAt={userLastRating.created_at}
+                />
+              </div>
+            )}
+
             <div>
-              <div className="flex items-center justify-between">
-                <p className="text-sm leading-base">Sua última leitura</p>
-                <Link.Root href="/profile">
-                  Ver todas
-                  <Link.Icon>
-                    <CaretRight />
-                  </Link.Icon>
-                </Link.Root>
+              <div>
+                <p className="text-sm leading-base">Avaliações mais recentes</p>
               </div>
 
-              <SummaryRating
-                book={{
-                  id: userLastRating.book.id,
-                  name: userLastRating.book.name,
-                  author: userLastRating.book.author,
-                  cover: {
-                    url: userLastRating.book.cover_url,
-                    altText: '',
-                  },
-                }}
-                rating={userLastRating.description}
-                ratingStarsAmount={userLastRating.rate}
-                createdAt={userLastRating.created_at}
-              />
-            </div>
-          )}
+              <div
+                aria-live={isLoading ? 'polite' : 'off'}
+                aria-busy={isLoading}
+                className="mt-4 flex flex-col gap-3"
+              >
+                {ratings.map((rating) => {
+                  return (
+                    <UserSummaryRating
+                      key={rating.id}
+                      book={{
+                        id: rating.book.id,
+                        name: rating.book.name,
+                        author: rating.book.author,
+                        cover: {
+                          url: rating.book.cover_url,
+                          altText: '',
+                        },
+                      }}
+                      user={{
+                        name: rating.user.name,
+                        avatarUrl: rating.user.avatar_url,
+                      }}
+                      rating={rating.description}
+                      ratingStarsAmount={rating.rate}
+                      createdAt={rating.created_at}
+                    />
+                  )
+                })}
 
-          <div>
-            <div>
-              <p className="text-sm leading-base">Avaliações mais recentes</p>
+                <div ref={loaderRef} className="mt-4 flex justify-center">
+                  {currentPage <= lastPage &&
+                    initialRatings.totalRatings > perPage &&
+                    isLoading && <Loader />}
+                </div>
+              </div>
+            </div>
+          </main>
+
+          <aside>
+            <div className="flex items-center justify-between">
+              <p className="text-sm leading-base">Livros populares</p>
+              <Link.Root href="/explore">
+                Ver todos
+                <Link.Icon>
+                  <CaretRight />
+                </Link.Icon>
+              </Link.Root>
             </div>
 
-            <div
-              aria-live={isLoading ? 'polite' : 'off'}
-              aria-busy={isLoading}
-              className="mt-4 flex flex-col gap-3"
-            >
-              {ratings.map((rating) => {
+            <div className="mt-4 flex flex-col gap-3">
+              {popularBooks.map((book) => {
                 return (
-                  <UserSummaryRating
-                    key={rating.id}
-                    book={{
-                      id: rating.book.id,
-                      name: rating.book.name,
-                      author: rating.book.author,
-                      cover: {
-                        url: rating.book.cover_url,
-                        altText: '',
-                      },
-                    }}
-                    user={{
-                      name: rating.user.name,
-                      avatarUrl: rating.user.avatar_url,
-                    }}
-                    rating={rating.description}
-                    ratingStarsAmount={rating.rate}
-                    createdAt={rating.created_at}
+                  <BookCard
+                    key={book.id}
+                    id={book.id}
+                    name={book.name}
+                    author={book.author}
+                    ratingStarsAmount={book.average_grade}
+                    cover={{ url: book.cover_url, altText: '', size: 'xs' }}
                   />
                 )
               })}
-
-              <div ref={loaderRef} className="mt-4 flex justify-center">
-                {currentPage <= lastPage &&
-                  initialRatings.totalRatings > perPage &&
-                  isLoading && <Loader />}
-              </div>
             </div>
-          </div>
-        </main>
-
-        <aside>
-          <div className="flex items-center justify-between">
-            <p className="text-sm leading-base">Livros populares</p>
-            <Link.Root href="/explore">
-              Ver todos
-              <Link.Icon>
-                <CaretRight />
-              </Link.Icon>
-            </Link.Root>
-          </div>
-
-          <div className="mt-4 flex flex-col gap-3">
-            {popularBooks.map((book) => {
-              return (
-                <BookCard
-                  key={book.id}
-                  id={book.id}
-                  name={book.name}
-                  author={book.author}
-                  ratingStarsAmount={book.average_grade}
-                  cover={{ url: book.cover_url, altText: '', size: 'xs' }}
-                />
-              )
-            })}
-          </div>
-        </aside>
+          </aside>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

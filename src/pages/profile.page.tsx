@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
+import { NextSeo } from 'next-seo'
 import { BookOpen, BookmarkSimple, Books, User, UserList } from 'phosphor-react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
@@ -164,151 +165,161 @@ export default function Profile({
     filteredRatingsOfUser?.ratings ?? initialRatingsOfUser.ratings
 
   return (
-    <div>
-      <header>
-        <Heading.Root>
-          <Heading.Icon>
-            <User />
-          </Heading.Icon>
+    <>
+      <NextSeo title={`Perfil de ${user.name} | BookWise`} noindex />
 
-          <Heading.Title>Perfil</Heading.Title>
-        </Heading.Root>
-      </header>
+      <div>
+        <header>
+          <Heading.Root>
+            <Heading.Icon>
+              <User />
+            </Heading.Icon>
 
-      <div className="mt-10 grid grid-cols-[1fr_19.15rem] items-start gap-16">
-        <div>
-          <RatingsSearchForm onSubmit={handleSubmitRatingsSearchForm} />
+            <Heading.Title>Perfil</Heading.Title>
+          </Heading.Root>
+        </header>
 
-          <main
-            aria-live={isLoading ? 'polite' : 'off'}
-            aria-busy={isLoading}
-            className="mt-8 flex flex-col gap-6"
-          >
-            {ratingsOfUser.map((rating) => {
-              return (
-                <Rating.Root key={rating.id}>
-                  <Rating.Date>
-                    {dayjs(rating.created_at).fromNow()}
-                  </Rating.Date>
+        <div className="mt-10 grid grid-cols-[1fr_19.15rem] items-start gap-16">
+          <div>
+            <RatingsSearchForm onSubmit={handleSubmitRatingsSearchForm} />
 
-                  <Rating.Box>
-                    <Rating.BookContainer>
-                      <Rating.BookCover>
-                        <BookSideModal.Trigger bookId={rating.book.id}>
-                          <button
-                            type="button"
-                            aria-label={`Ver mais detalhes do livro ${rating.book.name}`}
-                            className="min-w-max rounded-xs outline-none transition-all focus:ring focus:ring-gray-500"
-                          >
-                            <BookCover
-                              bookCoverUrl={rating.book.cover_url}
-                              altText=""
-                              size="sm"
-                            />
-                          </button>
-                        </BookSideModal.Trigger>
-                      </Rating.BookCover>
+            <main
+              aria-live={isLoading ? 'polite' : 'off'}
+              aria-busy={isLoading}
+              className="mt-8 flex flex-col gap-6"
+            >
+              {ratingsOfUser.map((rating) => {
+                return (
+                  <Rating.Root key={rating.id}>
+                    <Rating.Date>
+                      {dayjs(rating.created_at).fromNow()}
+                    </Rating.Date>
 
-                      <Rating.BookInfoContainer>
-                        <Rating.BookInfo>
-                          <Rating.BookName>{rating.book.name}</Rating.BookName>
-                          <Rating.BookAuthor>
-                            {rating.book.author}
-                          </Rating.BookAuthor>
-                        </Rating.BookInfo>
+                    <Rating.Box>
+                      <Rating.BookContainer>
+                        <Rating.BookCover>
+                          <BookSideModal.Trigger bookId={rating.book.id}>
+                            <button
+                              type="button"
+                              aria-label={`Ver mais detalhes do livro ${rating.book.name}`}
+                              className="min-w-max rounded-xs outline-none transition-all focus:ring focus:ring-gray-500"
+                            >
+                              <BookCover
+                                bookCoverUrl={rating.book.cover_url}
+                                altText=""
+                                size="sm"
+                              />
+                            </button>
+                          </BookSideModal.Trigger>
+                        </Rating.BookCover>
 
-                        <Rating.Stars>
-                          <RatingStarsView ratingStarsAmount={rating.rate} />
-                        </Rating.Stars>
-                      </Rating.BookInfoContainer>
-                    </Rating.BookContainer>
+                        <Rating.BookInfoContainer>
+                          <Rating.BookInfo>
+                            <Rating.BookName>
+                              {rating.book.name}
+                            </Rating.BookName>
+                            <Rating.BookAuthor>
+                              {rating.book.author}
+                            </Rating.BookAuthor>
+                          </Rating.BookInfo>
 
-                    <Rating.Description>
-                      {rating.description}
-                    </Rating.Description>
-                  </Rating.Box>
-                </Rating.Root>
-              )
-            })}
+                          <Rating.Stars>
+                            <RatingStarsView ratingStarsAmount={rating.rate} />
+                          </Rating.Stars>
+                        </Rating.BookInfoContainer>
+                      </Rating.BookContainer>
 
-            <div ref={loaderRef} className="mt-4 flex justify-center">
-              {currentPage <= lastPage &&
-                totalRatings > perPage &&
-                isLoading && <Loader />}
+                      <Rating.Description>
+                        {rating.description}
+                      </Rating.Description>
+                    </Rating.Box>
+                  </Rating.Root>
+                )
+              })}
+
+              <div ref={loaderRef} className="mt-4 flex justify-center">
+                {currentPage <= lastPage &&
+                  totalRatings > perPage &&
+                  isLoading && <Loader />}
+              </div>
+            </main>
+          </div>
+
+          <aside className="border-l border-gray-700">
+            <div className="flex flex-col items-center">
+              <Avatar avatarUrl={user.avatar_url} size="lg" />
+
+              <strong className="mt-5 text-xl leading-short">
+                {user.name}
+              </strong>
+              <span className="text-sm leading-base text-gray-400">
+                membro desde {new Date(user.created_at).getFullYear()}
+              </span>
             </div>
-          </main>
+
+            <div className="mx-auto my-8 h-1 w-8 rounded-full bg-gradient-horizontal" />
+
+            <div className="flex flex-col gap-10 px-13 py-5">
+              <Metric.Root>
+                <Metric.Icon>
+                  <BookOpen />
+                </Metric.Icon>
+
+                <Metric.Content>
+                  <Metric.Value>
+                    {userMetrics.amount_of_pages_read}
+                  </Metric.Value>
+                  <Metric.Name>Páginas lidas</Metric.Name>
+                </Metric.Content>
+              </Metric.Root>
+
+              <Metric.Root>
+                <Metric.Icon>
+                  <Books />
+                </Metric.Icon>
+
+                <Metric.Content>
+                  <Metric.Value>{userMetrics.ratings_amount}</Metric.Value>
+                  <Metric.Name>
+                    {userMetrics.ratings_amount === 1
+                      ? 'Livro avaliado'
+                      : 'Livros avaliados'}
+                  </Metric.Name>
+                </Metric.Content>
+              </Metric.Root>
+
+              <Metric.Root>
+                <Metric.Icon>
+                  <UserList />
+                </Metric.Icon>
+
+                <Metric.Content>
+                  <Metric.Value>
+                    {userMetrics.amount_of_authors_read}
+                  </Metric.Value>
+                  <Metric.Name>
+                    {userMetrics.amount_of_authors_read === 1
+                      ? 'Autor lido'
+                      : 'Autores lidos'}
+                  </Metric.Name>
+                </Metric.Content>
+              </Metric.Root>
+
+              <Metric.Root>
+                <Metric.Icon>
+                  <BookmarkSimple />
+                </Metric.Icon>
+
+                <Metric.Content>
+                  <Metric.Value>{userMetrics.most_read_category}</Metric.Value>
+                  <Metric.Name>Categoria mais lida</Metric.Name>
+                </Metric.Content>
+              </Metric.Root>
+            </div>
+          </aside>
         </div>
-
-        <aside className="border-l border-gray-700">
-          <div className="flex flex-col items-center">
-            <Avatar avatarUrl={user.avatar_url} size="lg" />
-
-            <strong className="mt-5 text-xl leading-short">{user.name}</strong>
-            <span className="text-sm leading-base text-gray-400">
-              membro desde {new Date(user.created_at).getFullYear()}
-            </span>
-          </div>
-
-          <div className="mx-auto my-8 h-1 w-8 rounded-full bg-gradient-horizontal" />
-
-          <div className="flex flex-col gap-10 px-13 py-5">
-            <Metric.Root>
-              <Metric.Icon>
-                <BookOpen />
-              </Metric.Icon>
-
-              <Metric.Content>
-                <Metric.Value>{userMetrics.amount_of_pages_read}</Metric.Value>
-                <Metric.Name>Páginas lidas</Metric.Name>
-              </Metric.Content>
-            </Metric.Root>
-
-            <Metric.Root>
-              <Metric.Icon>
-                <Books />
-              </Metric.Icon>
-
-              <Metric.Content>
-                <Metric.Value>{userMetrics.ratings_amount}</Metric.Value>
-                <Metric.Name>
-                  {userMetrics.ratings_amount === 1
-                    ? 'Livro avaliado'
-                    : 'Livros avaliados'}
-                </Metric.Name>
-              </Metric.Content>
-            </Metric.Root>
-
-            <Metric.Root>
-              <Metric.Icon>
-                <UserList />
-              </Metric.Icon>
-
-              <Metric.Content>
-                <Metric.Value>
-                  {userMetrics.amount_of_authors_read}
-                </Metric.Value>
-                <Metric.Name>
-                  {userMetrics.amount_of_authors_read === 1
-                    ? 'Autor lido'
-                    : 'Autores lidos'}
-                </Metric.Name>
-              </Metric.Content>
-            </Metric.Root>
-
-            <Metric.Root>
-              <Metric.Icon>
-                <BookmarkSimple />
-              </Metric.Icon>
-
-              <Metric.Content>
-                <Metric.Value>{userMetrics.most_read_category}</Metric.Value>
-                <Metric.Name>Categoria mais lida</Metric.Name>
-              </Metric.Content>
-            </Metric.Root>
-          </div>
-        </aside>
       </div>
-    </div>
+    </>
   )
 }
 
